@@ -1,0 +1,58 @@
+{
+    "last_updated": "2026-04-24",
+    "shop_name": "JR東京駅八重洲北口店",
+    "item":[
+        {
+            "id": "S001",
+            "item_name": "トリュフ塩パン",
+            "price": "318",
+            "category": "塩パン",
+            "is_active": true
+        },
+        {
+            "id": "S002",
+            "item_name": "海藻バター塩パン",
+            "price": "318",
+            "category": "塩パン",
+            "is_active": false
+        },
+        {
+            "id": "S003",
+            "item_name": "チョコガナシュ塩パン",
+            "price": "380",
+            "category": "塩パン",
+            "is_active": true
+        },
+        {
+            "id": "S004",
+            "item_name": "抹茶ガナシュ塩パン",
+            "price": "380",
+            "category": "塩パン",
+            "is_active": true
+        },
+        {
+            "id": "S005",
+            "item_name": "桜の塩パン",
+            "price": "380",
+            "category": "塩パン",
+            "is_active": true
+        },
+        {
+            "id": "D001",
+            "item_name": "クロワッサン",
+            "price": "260",
+            "category": "デニッシュ",
+            "is_active": true
+        },
+        {
+            "id": "D002",
+            "item_name": "シナモンシュガーロール",
+            "price": "260",
+            "category": "デニッシュ",
+            "is_active": true
+        }
+
+        
+
+    ]
+}
