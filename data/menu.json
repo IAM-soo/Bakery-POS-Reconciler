@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-04-24",
+    "last_updated": "2026-04-27",
     "shop_name": "JR東京駅八重洲北口店",
     "item":[
         {
@@ -47,8 +47,204 @@
         {
             "id": "D002",
             "item_name": "シナモンシュガーロール",
-            "price": "260",
+            "price": "430",
             "category": "デニッシュ",
+            "is_active": true
+        },
+        {
+            "id": "D003",
+            "item_name": "パンオショコラ",
+            "price": "457",
+            "category": "デニッシュ",
+            "is_active": true
+        },
+        {
+            "id": "D004",
+            "item_name": "パンオレザン",
+            "price": "400",
+            "category": "デニッシュ",
+            "is_active": false
+        },
+        {
+            "id": "D005",
+            "item_name": "チーズデニッシュ",
+            "price": "298",
+            "category": "デニッシュ",
+            "is_active": false
+        },
+        {
+            "id": "D006",
+            "item_name": "大葉とモッツァレラ",
+            "price": "321",
+            "category": "デニッシュ",
+            "is_active": false
+        },
+        {
+            "id": "D007",
+            "item_name": "クロワッサンブレッド",
+            "price": "380",
+            "category": "デニッシュ",
+            "is_active": true
+        },
+        {
+            "id": "D008",
+            "item_name": "ドバイチョコ",
+            "price": "498",
+            "category": "デニッシュ",
+            "is_active": true
+        },
+        {
+            "id": "D009",
+            "item_name": "トリュフドバイチョコ",
+            "price": "638",
+            "category": "デニッシュ",
+            "is_active": false
+        },
+        {
+            "id": "N001",
+            "item_name": "truffle bakery ドーナツ",
+            "price": "410",
+            "category": "生ドーナツ",
+            "is_active": true
+        },
+        {
+            "id": "N002",
+            "item_name": "あん生ドーナツ",
+            "price": "279",
+            "category": "生ドーナツ",
+            "is_active": true
+        },
+        {
+            "id": "N003",
+            "item_name": "トリュフソルトドーナツ",
+            "price": "449",
+            "category": "生ドーナツ",
+            "is_active": true
+        },
+        {
+            "id": "Z001",
+            "item_name": "3種のきのこ",
+            "price": "399",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z002",
+            "item_name": "クロックムッシュ",
+            "price": "479",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z003",
+            "item_name": "ほうれん草とベーコン",
+            "price": "399",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z004",
+            "item_name": "ホットドッグクラッシック",
+            "price": "918",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z005",
+            "item_name": "明太子フランス",
+            "price": "579",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z006",
+            "item_name": "オリーブとバター",
+            "price": "594",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z007",
+            "item_name": "イベリコ豚のソーセージパン",
+            "price": "398",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z008",
+            "item_name": "スパイス豚カレーパン",
+            "price": "397",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "Z009",
+            "item_name": "ほうれん草味噌カレーパン",
+            "price": "420",
+            "category": "蔬菜パン",
+            "is_active": true
+        },
+        {
+            "id": "K001",
+            "item_name": "クリームパン",
+            "price": "380",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K002",
+            "item_name": "メロンパン",
+            "price": "299",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K003",
+            "item_name": "チェリーシュガー",
+            "price": "330",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K004",
+            "item_name": "チョコチップ",
+            "price": "299",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K005",
+            "item_name": "いちじくとチョコと黒胡椒",
+            "price": "380",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K006",
+            "item_name": "杏と紅茶とワイトチョコ",
+            "price": "380",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K007",
+            "item_name": "あんバターサンド",
+            "price": "380",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K008",
+            "item_name": "ダブルチョコレート",
+            "price": "380",
+            "category": "菓子パン",
+            "is_active": true
+        },
+        {
+            "id": "K009",
+            "item_name": "金時芋のバターパン",
+            "price": "380",
+            "category": "菓子パン",
             "is_active": true
         }
 
