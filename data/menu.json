@@ -246,9 +246,27 @@
             "price": "380",
             "category": "菓子パン",
             "is_active": true
+        },
+        {
+            "id": "B001",
+            "item_name": "ポリバック",
+            "price": "30",
+            "category": "袋",
+            "is_active": true
+        },
+        {
+            "id": "B002",
+            "item_name": "紙袋(S)",
+            "price": "40",
+            "category": "袋",
+            "is_active": true
+        },
+        {
+            "id": "B003",
+            "item_name": "紙袋(M)",
+            "price": "50",
+            "category": "袋",
+            "is_active": true
         }
-
-        
-
     ]
 }
