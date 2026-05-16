@@ -317,3 +317,29 @@ if __name__ == "__main__":
 
     # Print only the first 3 combinations for checking.
     print_combinations(combinations[:3])
+
+    #input testing
+    print("取消金額を入力してください＞")
+    input_cancelled_amount = int(input())
+    print("差額を入力してください＞")
+    input_difference = int(input())
+    print("どちらが多いを入力してください？（POS:1 CAT:2）＞")
+    input_mode = int(input())
+
+    if input_mode == 1:    
+        target = calculate_target_amount(input_cancelled_amount,input_difference,'POS_GT_CAT')
+        combinations = find_combinations(products, target, max_items=8, max_results=20)
+        print("target", target)
+        print("found", len(combinations))
+        print_combinations(combinations[:3])
+    if input_mode == 2:
+        target = calculate_target_amount(input_cancelled_amount,input_difference,'CAT_GT_POS')
+        combinations = find_combinations(products, target, max_items=8, max_results=20)
+        print("target", target)
+        print("found", len(combinations))
+        print_combinations(combinations[:3])
+    if input_mode != 1:
+        print("入力間違いを確認してください")
+
+
+        
