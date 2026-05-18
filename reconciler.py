@@ -46,6 +46,34 @@ def load_menu():
         return []
 
 
+
+def sum_amounts(amounts):
+    total = 0
+
+    for amount in amounts:
+        tatal += amount
+        
+    return total
+
+
+def cat_emoney_input():
+    cat_emoney = {"楽天Edy": 0, "ID":0, "QUICPay":0, "WAON":0, "nanaco":0}
+    for emoney_name in cat_emoney:
+        cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
+
+    cat_emoney_total = sum(cat_emoney.values())
+    return cat_emoney, cat_emoney_total
+    
+def cat_QR_input():
+    cat_QR = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
+    for QR_name in cat_QR:
+        cat_QR[QR_name] = input_int(QR_name + "の金額を入力してください＞")
+
+    cat_QR_total = sum(cat_QR.values())
+    return cat_QR, cat_QR_total
+
+
+
 def calculate_difference(pos_amount, cat_amount):
     if pos_amount > cat_amount:
         difference = pos_amount - cat_amount
@@ -307,7 +335,7 @@ def input_int(message):
         except ValueError:
             print("数字を入力してください")
 
-#different checker
+#Difference checker
 def run_difference_checker():
     pos_amount = input_int("POS金額を入力してください＞")
     cat_amount = input_int("CAT金額を入力してください＞")
@@ -325,7 +353,7 @@ def run_difference_checker():
     print(mode)
 
 
-#Run the program in the terminal.
+#Correction helper
 def run_correction_helper():
     products = load_menu()
 
@@ -370,7 +398,8 @@ def run_tools_select():
 
 
 if __name__ == "__main__":
-    run_tools_select()
+    emoney_input()
+    #run_tools_select()
 
 
 
