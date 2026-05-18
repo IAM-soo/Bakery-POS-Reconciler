@@ -46,7 +46,7 @@ def load_menu():
         return []
 
 
-def calculate_different(pos_amount, cat_amount):
+def calculate_difference(pos_amount, cat_amount):
     if pos_amount > cat_amount:
         difference = pos_amount - cat_amount
         mode = "POS_GT_CAT"
@@ -308,11 +308,11 @@ def input_int(message):
             print("数字を入力してください")
 
 #different checker
-def run_different_checker():
+def run_difference_checker():
     pos_amount = input_int("POS金額を入力してください＞")
     cat_amount = input_int("CAT金額を入力してください＞")
 
-    difference, mode = calculate_different(pos_amount, cat_amount)
+    difference, mode = calculate_difference(pos_amount, cat_amount)
 
     if mode == "POS_GT_CAT":
         print("POSの方が多いです")
@@ -357,9 +357,9 @@ def run_correction_helper():
 
 #Tools selector
 def run_tools_select():
-    tools = input_int("ツールを選択してください＞(Checker: 1 Conciler: 2)")
+    tools = input_int("ツールを選択してください＞(Checker: 1 Correction: 2)")
     if tools == 1:
-        run_different_checker()
+        run_difference_checker()
         return
     elif tools == 2:
         run_correction_helper()
