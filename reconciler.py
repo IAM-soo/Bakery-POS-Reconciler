@@ -235,7 +235,7 @@ def print_combinations(combinations):
     # ...
     for combination_number, combination in enumerate(combinations, start=1):
         print()
-        print("combination", combination_number)
+        print("組合", combination_number)
 
         # Store the total price of this combination.
         total = 0
@@ -278,7 +278,7 @@ def print_combinations(combinations):
             print("-", item["item_name"], item["price"], "x", item["quantity"])
 
         # Print the total price of this combination.
-        print("total:", total)
+        print("金額:", total)
 
 #Run in Terminal 
 def run_cli():
@@ -303,9 +303,11 @@ def run_cli():
     target = calculate_target_amount(input_cancelled_amount,input_difference, mode)
     combinations = find_combinations(products, target, max_items=8, max_results=20)
     
-    print("target", target)
-    print("found", len(combinations))
-    print_combinations(combinations[:3])
+    print("目標金額", target)
+    if len(combinations) == 0:
+        print("この取消金額で該当する商品組み合わせが見つかりませんでした。")
+    else:
+        print_combinations(combinations[:3])
 
 #Force user to input in certain number
 def input_int(message):
