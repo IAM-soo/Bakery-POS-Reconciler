@@ -87,7 +87,7 @@ def calculate_target_amount(cancelled_amount, difference, mode):
         return None
 
 
-def find_combinations(products, target_amount, max_items=8, max_results=20):
+def find_combinations(products, target_amount, max_items=8, max_results=3):
     # This function searches for product combinations
     # whose total price is exactly equal to target_amount.
     #
@@ -278,9 +278,22 @@ def print_combinations(combinations):
             print("-", item["item_name"], item["price"], "x", item["quantity"])
 
         # Print the total price of this combination.
-        print("金額:", total)
+        print("総額:", total)
 
-#Run in Terminal 
+
+#Force user to input in certain number
+def input_int(message):
+    while True:
+        user_input = input(message)
+
+        try:
+            return int(user_input)
+        
+        except ValueError:
+            print("数字を入力してください")
+
+
+#Run the program in the terminal.
 def run_cli():
     products = load_menu()
 
@@ -296,7 +309,7 @@ def run_cli():
     elif input_mode == 2:
         mode = 'CAT_GT_POS'
 
-    else :
+    else:
         print("入力間違いを確認してください")
         return
     
@@ -304,22 +317,11 @@ def run_cli():
     combinations = find_combinations(products, target, max_items=8, max_results=20)
     
     print("目標金額", target)
+    print("found", len(combinations))
     if len(combinations) == 0:
         print("この取消金額で該当する商品組み合わせが見つかりませんでした。")
     else:
-        print_combinations(combinations[:3])
-
-#Force user to input in certain number
-def input_int(message):
-    while True:
-        user_input = input(message)
-
-        try:
-            return int(user_input)
-        
-        except ValueError:
-            print("数字を入力してください")
-
+        print_combinations(combinations)
 
 if __name__ == "__main__":
     run_cli()
