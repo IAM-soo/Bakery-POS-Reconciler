@@ -47,13 +47,13 @@ def load_menu():
 
 
 
-def sum_amounts(amounts):
-    total = 0
-
-    for amount in amounts:
-        tatal += amount
-        
-    return total
+#def sum_amounts(amount):
+#   total = 0
+#
+#   for amount in amounts:
+#       tatal += amount
+#       
+#   return total
 
 
 def cat_emoney_input():
