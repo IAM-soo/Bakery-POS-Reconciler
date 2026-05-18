@@ -11,39 +11,54 @@ def load_menu():
     # Example:
     # base_path = ".../Bakery-POS-Reconciler"
     # menu_path = ".../Bakery-POS-Reconciler/data/menu.json"
-    menu_path = os.path.join(base_path, 'data', 'menu.json')
+    menu_path = os.path.join(base_path, "data", "menu.json")
 
     try:
         # Open menu.json in read-only mode.
-        # encoding='utf-8' is needed because the menu contains Japanese text.
-        with open(menu_path, 'r', encoding='utf-8') as f:
+        # encoding="utf-8" is needed because the menu contains Japanese text.
+        with open(menu_path, "r", encoding="utf-8") as f:
             # json.load(f) reads the JSON file and converts it into Python data.
             # After this line, data becomes a Python dictionary.
             data = json.load(f)
 
             # Keep only active products.
-            # p.get('is_active', True) means:
+            # p.get("is_active", True) means:
             # - If the product has is_active, use that value.
             # - If the product does not have is_active, treat it as True.
-            active_products = [p for p in data['item'] if p.get('is_active', True)]
+            active_products = [p for p in data["item"] if p.get("is_active", True)]
 
             # Convert each product price into an integer.
             # This is necessary because JSON data may store price as text.
             for p in active_products:
-                p['price'] = int(p['price'])
+                p["price"] = int(p["price"])
 
             # Return the cleaned product list to the caller.
             return active_products
 
     except FileNotFoundError:
         # This runs if menu.json cannot be found.
-        print('ファイルが存在しません')
+        print("ファイルが存在しません")
         return []
 
     except json.JSONDecodeError:
         # This runs if menu.json exists but the JSON format is broken.
-        print('JSONファイル解析エラー')
+        print("JSONファイル解析エラー")
         return []
+
+
+def calculate_different(pos_amount, cat_amount):
+    if pos_amount > cat_amount:
+        difference = pos_amount - cat_amount
+        mode = "POS_GT_CAT"
+        return (difference, mode)
+    elif cat_amount > pos_amount:
+        difference = cat_amount - pos_amount
+        mode = "CAT_GT_POS"
+        return (difference, mode)
+    else:
+        difference = 0
+        mode = "MATCH"
+        return (difference, mode)
 
 
 def calculate_target_amount(cancelled_amount, difference, mode):
@@ -59,7 +74,7 @@ def calculate_target_amount(cancelled_amount, difference, mode):
     #   POS_GT_CAT means POS amount is greater than CAT amount.
     #   CAT_GT_POS means CAT amount is greater than POS amount.
 
-    if mode == 'POS_GT_CAT':
+    if mode == "POS_GT_CAT":
         # If POS is greater than CAT,
         # the corrected POS amount should be smaller.
         #
@@ -70,7 +85,7 @@ def calculate_target_amount(cancelled_amount, difference, mode):
         target_amount = cancelled_amount - difference
         return target_amount
 
-    elif mode == 'CAT_GT_POS':
+    elif mode == "CAT_GT_POS":
         # If CAT is greater than POS,
         # the corrected POS amount should be larger.
         #
@@ -293,6 +308,22 @@ def input_int(message):
             print("数字を入力してください")
 
 
+def run_differrent_checker():
+    pos_amount = input_int("POS金額を入力してください＞")
+    cat_amount = input_int("CAT金額を入力してください＞")
+
+    difference, mode = calculate_different(pos_amount, cat_amount)
+
+    if mode == "POS_GT_CAT":
+        print("POSの方が多いです")
+    elif mode == "CAT_GT_POS":
+        print("CATの方が多いです")
+    elif mode == "MATCH":
+        print("両方一です")
+    
+    print("差額", difference)
+
+
 #Run the program in the terminal.
 def run_cli():
     products = load_menu()
@@ -304,10 +335,10 @@ def run_cli():
     input_mode = input_int("どちらが多いを入力してください？（POS:1 CAT:2）＞")
 
     if input_mode == 1:
-        mode = 'POS_GT_CAT'    
+        mode = "POS_GT_CAT"    
         
     elif input_mode == 2:
-        mode = 'CAT_GT_POS'
+        mode = "CAT_GT_POS"
 
     else:
         print("入力間違いを確認してください")
@@ -323,8 +354,23 @@ def run_cli():
     else:
         print_combinations(combinations)
 
+
+def run_tools_select():
+    tools = input_int("ツールを選択してください＞(Checker: 1 Conciler: 2)")
+    if tools == 1:
+        run_differrent_checker()
+        return
+    elif tools == 2:
+        run_cli()
+        return
+    else:
+        print("入力間違いを確認してください")
+        return
+
+
 if __name__ == "__main__":
-    run_cli()
+    run_tools_select()
+
 
 
 
