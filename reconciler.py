@@ -280,66 +280,40 @@ def print_combinations(combinations):
         # Print the total price of this combination.
         print("total:", total)
 
-
-# Test section.
-#
-# This code only runs when this file is executed directly.
-# It will not run if this file is imported by another Python file.
-if __name__ == "__main__":
-
-    # Load active products from data/menu.json.
+def run_cli():
     products = load_menu()
 
-    # Check if menu loading works.
-    print("product count:", len(products))
-
-    # Print the first 3 products only.
-    # This is for checking the data structure.
-    print(products[:3])
-
-    # Test case:
-    #
-    # cancelled_amount = 1400
-    # difference = 210
-    # mode = POS_GT_CAT
-    #
-    # Because POS is greater than CAT,
-    # target should become:
-    # 1400 - 210 = 1190
-    target = calculate_target_amount(1400, 210, 'POS_GT_CAT')
-
-    # Search for product combinations that match the target amount.
-    combinations = find_combinations(products, target, max_items=8, max_results=20)
-
-    # Print search summary.
-    print("target", target)
-    print("found", len(combinations))
-
-    # Print only the first 3 combinations for checking.
-    print_combinations(combinations[:3])
-
-    #input testing
     print("取消金額を入力してください＞")
     input_cancelled_amount = int(input())
+    
     print("差額を入力してください＞")
     input_difference = int(input())
+    
     print("どちらが多いを入力してください？（POS:1 CAT:2）＞")
     input_mode = int(input())
 
-    if input_mode == 1:    
-        target = calculate_target_amount(input_cancelled_amount,input_difference,'POS_GT_CAT')
-        combinations = find_combinations(products, target, max_items=8, max_results=20)
-        print("target", target)
-        print("found", len(combinations))
-        print_combinations(combinations[:3])
-    if input_mode == 2:
-        target = calculate_target_amount(input_cancelled_amount,input_difference,'CAT_GT_POS')
-        combinations = find_combinations(products, target, max_items=8, max_results=20)
-        print("target", target)
-        print("found", len(combinations))
-        print_combinations(combinations[:3])
-    if input_mode != 1:
-        print("入力間違いを確認してください")
+    if input_mode == 1:
+        mode = 'POS_GT_CAT'    
+        
+    elif input_mode == 2:
+        mode = 'CAT_GT_POS'
 
+    else :
+        print("入力間違いを確認してください")
+        return
+    
+    target = calculate_target_amount(input_cancelled_amount,input_difference, mode)
+    combinations = find_combinations(products, target, max_items=8, max_results=20)
+    
+    print("target", target)
+    print("found", len(combinations))
+    print_combinations(combinations[:3])
+
+if __name__ == "__main__":
+    run_cli()
+
+
+
+    
 
         
