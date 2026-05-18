@@ -280,17 +280,15 @@ def print_combinations(combinations):
         # Print the total price of this combination.
         print("total:", total)
 
+#Run in Terminal 
 def run_cli():
     products = load_menu()
 
-    print("取消金額を入力してください＞")
-    input_cancelled_amount = int(input())
+    input_cancelled_amount = input_int("取消金額を入力してください＞")
     
-    print("差額を入力してください＞")
-    input_difference = int(input())
+    input_difference = input_int("差額を入力してください＞")
     
-    print("どちらが多いを入力してください？（POS:1 CAT:2）＞")
-    input_mode = int(input())
+    input_mode = input_int("どちらが多いを入力してください？（POS:1 CAT:2）＞")
 
     if input_mode == 1:
         mode = 'POS_GT_CAT'    
@@ -308,6 +306,18 @@ def run_cli():
     print("target", target)
     print("found", len(combinations))
     print_combinations(combinations[:3])
+
+#Force user to input in certain number
+def input_int(message):
+    while True:
+        user_input = input(message)
+
+        try:
+            return int(user_input)
+        
+        except ValueError:
+            print("数字を入力してください")
+
 
 if __name__ == "__main__":
     run_cli()
