@@ -314,7 +314,7 @@ def run_cli():
         return
     
     target = calculate_target_amount(input_cancelled_amount,input_difference, mode)
-    combinations = find_combinations(products, target, max_items=8, max_results=20)
+    combinations = find_combinations(products, target)
     
     print("目標金額", target)
     print("found", len(combinations))
