@@ -296,7 +296,7 @@ def print_combinations(combinations):
         print("総額:", total)
 
 
-#Force user to input in certain number
+#Force user to input in number
 def input_int(message):
     while True:
         user_input = input(message)
@@ -307,8 +307,8 @@ def input_int(message):
         except ValueError:
             print("数字を入力してください")
 
-
-def run_differrent_checker():
+#different checker
+def run_different_checker():
     pos_amount = input_int("POS金額を入力してください＞")
     cat_amount = input_int("CAT金額を入力してください＞")
 
@@ -319,13 +319,14 @@ def run_differrent_checker():
     elif mode == "CAT_GT_POS":
         print("CATの方が多いです")
     elif mode == "MATCH":
-        print("両方一です")
+        print("両方一致しています")
     
     print("差額", difference)
+    print(mode)
 
 
 #Run the program in the terminal.
-def run_cli():
+def run_correction_helper():
     products = load_menu()
 
     input_cancelled_amount = input_int("取消金額を入力してください＞")
@@ -354,14 +355,14 @@ def run_cli():
     else:
         print_combinations(combinations)
 
-
+#Tools selector
 def run_tools_select():
     tools = input_int("ツールを選択してください＞(Checker: 1 Conciler: 2)")
     if tools == 1:
-        run_differrent_checker()
+        run_different_checker()
         return
     elif tools == 2:
-        run_cli()
+        run_correction_helper()
         return
     else:
         print("入力間違いを確認してください")
