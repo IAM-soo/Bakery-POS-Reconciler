@@ -54,6 +54,8 @@ def load_menu():
 # Web app can reuse these functions
 # =========================
 
+def calculate_payment_total(payment_amounts):
+    return sum(payment_amounts.values())
 
 def calculate_difference(pos_amount, cat_amount):
     if pos_amount > cat_amount:
@@ -318,7 +320,7 @@ def cat_emoney_input():
     for emoney_name in cat_emoney:
         cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
 
-    cat_emoney_total = sum(cat_emoney.values())
+    cat_emoney_total = calculate_payment_total(cat_emoney)
     return cat_emoney, cat_emoney_total
     
 def cat_qr_input():
@@ -326,7 +328,7 @@ def cat_qr_input():
     for qr_name in cat_qr:
         cat_qr[qr_name] = input_int(qr_name + "の金額を入力してください＞")
 
-    cat_qr_total = sum(cat_qr.values())
+    cat_qr_total = calculate_payment_total(cat_qr)
     return cat_qr, cat_qr_total
 
 #Force user to input in number
