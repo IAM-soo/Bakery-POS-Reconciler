@@ -2,6 +2,9 @@ import json
 import os
 
 
+# =========================
+# Data loading
+# =========================
 def load_menu():
     # __file__ means the path of this Python file.
     # os.path.dirname(__file__) gets the folder that contains this file.
@@ -46,32 +49,10 @@ def load_menu():
         return []
 
 
-
-#def sum_amounts(amount):
-#   total = 0
-#
-#   for amount in amounts:
-#       total += amount
-#       
-#   return total
-
-
-def cat_emoney_input():
-    cat_emoney = {"楽天Edy": 0, "ID":0, "QUICPay":0, "WAON":0, "nanaco":0}
-    for emoney_name in cat_emoney:
-        cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
-
-    cat_emoney_total = sum(cat_emoney.values())
-    return cat_emoney, cat_emoney_total
-    
-def cat_qr_input():
-    cat_qr = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
-    for qr_name in cat_qr:
-        cat_qr[qr_name] = input_int(qr_name + "の金額を入力してください＞")
-
-    cat_qr_total = sum(cat_qr.values())
-    return cat_qr, cat_qr_total
-
+# =========================
+# Core logic
+# Web app can reuse these functions
+# =========================
 
 
 def calculate_difference(pos_amount, cat_amount):
@@ -87,7 +68,6 @@ def calculate_difference(pos_amount, cat_amount):
         difference = 0
         mode = "MATCH"
         return (difference, mode)
-
 
 def calculate_target_amount(cancelled_amount, difference, mode):
     # This function calculates the corrected target amount.
@@ -128,7 +108,6 @@ def calculate_target_amount(cancelled_amount, difference, mode):
         # If mode is not recognized, return None.
         print("Invalid mode")
         return None
-
 
 def find_combinations(products, target_amount, max_items=8, max_results=3):
     # This function searches for product combinations
@@ -269,6 +248,11 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
     return results
 
 
+# =========================
+# Output formatting
+# CLI only for now
+# =========================
+
 def print_combinations(combinations):
     # Print each valid combination.
     #
@@ -324,6 +308,27 @@ def print_combinations(combinations):
         print("総額:", total)
 
 
+# =========================
+# CLI input helpers
+# Terminal only
+# =========================
+
+def cat_emoney_input():
+    cat_emoney = {"楽天Edy": 0, "ID":0, "QUICPay":0, "WAON":0, "nanaco":0}
+    for emoney_name in cat_emoney:
+        cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
+
+    cat_emoney_total = sum(cat_emoney.values())
+    return cat_emoney, cat_emoney_total
+    
+def cat_qr_input():
+    cat_qr = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
+    for qr_name in cat_qr:
+        cat_qr[qr_name] = input_int(qr_name + "の金額を入力してください＞")
+
+    cat_qr_total = sum(cat_qr.values())
+    return cat_qr, cat_qr_total
+
 #Force user to input in number
 def input_int(message):
     while True:
@@ -334,6 +339,12 @@ def input_int(message):
         
         except ValueError:
             print("数字を入力してください")
+
+
+# =========================
+# CLI workflows
+# Terminal only
+# =========================
 
 #Difference checker
 def run_difference_checker():
@@ -398,9 +409,6 @@ def run_tools_select():
 
 
 if __name__ == "__main__":
-    cat_qr, cat_qr_total = cat_qr_input()
-    print(cat_qr)
-    print(cat_qr_total)
     run_tools_select()
 
 
