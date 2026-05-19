@@ -51,7 +51,7 @@ def load_menu():
 #   total = 0
 #
 #   for amount in amounts:
-#       tatal += amount
+#       total += amount
 #       
 #   return total
 
@@ -64,13 +64,13 @@ def cat_emoney_input():
     cat_emoney_total = sum(cat_emoney.values())
     return cat_emoney, cat_emoney_total
     
-def cat_QR_input():
-    cat_QR = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
-    for QR_name in cat_QR:
-        cat_QR[QR_name] = input_int(QR_name + "の金額を入力してください＞")
+def cat_qr_input():
+    cat_qr = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
+    for qr_name in cat_qr:
+        cat_qr[qr_name] = input_int(qr_name + "の金額を入力してください＞")
 
-    cat_QR_total = sum(cat_QR.values())
-    return cat_QR, cat_QR_total
+    cat_qr_total = sum(cat_qr.values())
+    return cat_qr, cat_qr_total
 
 
 
@@ -398,8 +398,10 @@ def run_tools_select():
 
 
 if __name__ == "__main__":
-    emoney_input()
-    #run_tools_select()
+    cat_qr, cat_qr_total = cat_qr_input()
+    print(cat_qr)
+    print(cat_qr_total)
+    run_tools_select()
 
 
 
