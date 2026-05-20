@@ -50,6 +50,34 @@ def load_menu():
 
 
 # =========================
+# Payment method definitions
+# =========================
+
+#POS
+POS_METHODS = [
+    "クレジットカード",
+    "交通系IC",
+    "電子マネー",
+    "国内QR",
+    "中国QR",
+    "金券",
+]
+
+#CAT
+CAT_EMONEY_METHODS = {"楽天Edy", "iD", "QUICPay", "WAON", "nanaco"}
+CAT_JPQR_METHODS = {"楽天Pay", "PayPay", "au PAY", "d払い", "J-Coin Pay"}
+CAT_CHQR_METHODS = {"Alipay", "WeChatPay"}
+
+PAYMENT_GROUPS = {
+    "クレジットカード": ["クレジットカード"],
+    "交通系IC": ["交通系IC"],
+    "電子マネー": CAT_EMONEY_METHODS,
+    "国内QR": CAT_JPQR_METHODS,
+    "中国QR": CAT_CHQR_METHODS,
+    "金券": ["金券"],
+}
+
+# =========================
 # Core logic
 # Web app can reuse these functions
 # =========================
@@ -316,20 +344,29 @@ def print_combinations(combinations):
 # =========================
 
 def cat_emoney_input():
-    cat_emoney = {"楽天Edy": 0, "ID":0, "QUICPay":0, "WAON":0, "nanaco":0}
-    for emoney_name in cat_emoney:
+    cat_emoney = {}
+    for emoney_name in CAT_EMONEY_METHODS:
         cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
 
     cat_emoney_total = calculate_payment_total(cat_emoney)
     return cat_emoney, cat_emoney_total
     
-def cat_qr_input():
-    cat_qr = {"楽天Pay": 0, "PayPay":0, "auPay":0, "d払い":0, "JCoinPay":0}
-    for qr_name in cat_qr:
-        cat_qr[qr_name] = input_int(qr_name + "の金額を入力してください＞")
+def cat_jpqr_input():
+    cat_jpqr = {}
+    for jpqr_name in CAT_JPQR_METHODS:
+        cat_jpqr[jpqr_name] = input_int(jpqr_name + "の金額を入力してください＞")
 
-    cat_qr_total = calculate_payment_total(cat_qr)
-    return cat_qr, cat_qr_total
+    cat_jpqr_total = calculate_payment_total(cat_jpqr)
+    return cat_jpqr, cat_jpqr_total
+
+def cat_chqr_input():
+    cat_chqr = {}
+    for chqr_name in CAT_CHQR_METHODS:
+        cat_chqr[chqr_name] = input_int(chqr_name + "の金額を入力してください＞")
+
+    cat_chqr_total = calculate_payment_total(cat_chqr)
+    return cat_chqr, cat_chqr_total
+
 
 #Force user to input in number
 def input_int(message):
