@@ -64,9 +64,9 @@ POS_METHODS = [
 ]
 
 #CAT
-CAT_EMONEY_METHODS = {"楽天Edy", "iD", "QUICPay", "WAON", "nanaco"}
-CAT_JPQR_METHODS = {"楽天Pay", "PayPay", "au PAY", "d払い", "J-Coin Pay"}
-CAT_CHQR_METHODS = {"Alipay", "WeChatPay"}
+CAT_EMONEY_METHODS = ["楽天Edy", "iD", "QUICPay", "WAON", "nanaco"]
+CAT_JPQR_METHODS = ["楽天Pay", "PayPay", "au PAY", "d払い", "J-Coin Pay"]
+CAT_CHQR_METHODS = ["Alipay", "WeChatPay"]
 
 PAYMENT_GROUPS = {
     "クレジットカード": ["クレジットカード"],
