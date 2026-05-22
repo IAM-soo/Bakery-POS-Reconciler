@@ -21,11 +21,24 @@ st.write("商品数:", len(products))
 st.header("差額チェック")
 
 
+def cat_input():
+    cat_amounts = {}
 
-def POS_input():
-    cat_emoney = {}
-    for emoney_name in CAT_EMONEY_METHODS:
-        cat_emoney[emoney_name] = st.number_input(emoney_name, min_value=0, step=1)
+    for payment_group in PAYMENT_GROUPS:
+        cat_methods = PAYMENT_GROUPS[payment_group]
+
+        for cat_method in cat_methods:
+            cat_amounts[cat_method] = st.number_input(cat_method, min_value=0, step=1)
+
+    return cat_amounts
+
+
+def calculate_selected_payment_total(payment_amounts, selected_method):
+    total = 0
+    for method in selected_method:
+        total += payment_amounts.get(method, 0)
+    return total
+    
 
 
 def cat_credit_input():
