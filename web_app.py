@@ -38,6 +38,7 @@ def calculate_selected_payment_total(payment_amounts, selected_methods):
     for method in selected_methods:
         total += payment_amounts.get(method, 0)
     return total
+
     
 def reconcile_cat_amounts(cat_amounts_temp):
     cat_amounts = {}
@@ -57,60 +58,38 @@ def pos_input():
 
     return pos_amounts
 
+
 def compare_payment_amounts(pos_amounts, cat_amounts):
+    comparison_results = []
     for method in POS_METHODS:
         pos_amount = pos_amounts.get(method, 0)
         cat_amount = cat_amounts.get(method, 0)
-        
         difference, mode = calculate_difference(pos_amount, cat_amount)
 
-        st.write(method)
-        st.write("POS:", pos_amount)
-        st.write("CAT:", cat_amount)
-        st.write("差額:", difference)
-        st.write("mode:", mode)
+        result = {"method":method, "pos_amount":pos_amount, "cat_amount":cat_amount, "difference":difference, "mode":mode}
+
+        comparison_results.append(result)
+
+    return comparison_results
+
+   
+def show_difference(comparison_results):
+    for result in comparison_results:
+        st.write(result["method"])
+        st.write("POS:", result["pos_amount"])
+        st.write("CAT:", result["cat_amount"])
+        st.write("差額:", result["difference"])
+        if result["mode"] == "POS_GT_CAT":
+            st.write("POS側が多い")
+        elif result["mode"] == "CAT_GT_POS":
+            st.write("CAT側が多い")
+        else:
+            st.write("合ってます")
        
-
-
-# def cat_credit_input():
-#     cat_credit = st.number_input("CATクレジット", min_value=0, step=1)
-#     return cat_credit
-
-
-# def cat_suica_input():
-#     cat_suica = st.number_input("CAT交通系IC", min_value=0, step=1)
-#     return cat_suica
-
-
-# def cat_emoney_input():
-#     cat_emoney = {}
-#     for emoney_name in CAT_EMONEY_METHODS:
-#         cat_emoney[emoney_name] = st.number_input(emoney_name, min_value=0, step=1)
-
-#     emoney_total = calculate_payment_total(cat_emoney)
-#     st.write("CAT電子マネー総額:", emoney_total)
-
-
-# def cat_jpqr_input():
-#     cat_jpqr = {}
-#     for jpqr_name in CAT_JPQR_METHODS:
-#         cat_jpqr[jpqr_name] = st.number_input(jpqr_name, min_value=0, step=1)
-
-#     jpqr_total = calculate_payment_total(cat_jpqr)
-#     st.write("CAT国内QR総額:", jpqr_total)
-
-
-# def cat_chqr_input():
-#     cat_chqr = {}
-#     for chqr_name in CAT_CHQR_METHODS:
-#         cat_chqr[chqr_name] = st.number_input(chqr_name, min_value=0, step=1)
-
-#     chqr_total = calculate_payment_total(cat_chqr)
-#     st.write("CAT中国QR総額:", chqr_total)
-
 
 if __name__ == "__main__":
     cat_amounts_temp = cat_input()
     pos_amounts = pos_input()
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
-    compare_payment_amounts(pos_amounts, cat_amounts)
+    comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
+    show_difference(comparison_results)
