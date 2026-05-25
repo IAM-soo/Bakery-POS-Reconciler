@@ -85,6 +85,24 @@ PAYMENT_GROUPS = {
 def calculate_payment_total(payment_amounts):
     return sum(payment_amounts.values())
 
+
+def calculate_selected_payment_total(payment_amounts, selected_methods):
+    total = 0
+    for method in selected_methods:
+        total += payment_amounts.get(method, 0)
+    return total
+
+
+def reconcile_cat_amounts(cat_amounts_temp):
+    cat_amounts = {}
+
+    for payment_method in POS_METHODS:
+        selected_methods = PAYMENT_GROUPS[payment_method]
+        cat_amounts[payment_method] = calculate_selected_payment_total(cat_amounts_temp, selected_methods)
+
+    return cat_amounts
+
+
 def calculate_difference(pos_amount, cat_amount):
     if pos_amount > cat_amount:
         difference = pos_amount - cat_amount
@@ -98,6 +116,21 @@ def calculate_difference(pos_amount, cat_amount):
         difference = 0
         mode = "MATCH"
         return (difference, mode)
+
+
+def compare_payment_amounts(pos_amounts, cat_amounts):
+    comparison_results = []
+    for method in POS_METHODS:
+        pos_amount = pos_amounts.get(method, 0)
+        cat_amount = cat_amounts.get(method, 0)
+        difference, mode = calculate_difference(pos_amount, cat_amount)
+
+        result = {"method":method, "pos_amount":pos_amount, "cat_amount":cat_amount, "difference":difference, "mode":mode}
+
+        comparison_results.append(result)
+
+    return comparison_results
+
 
 def calculate_target_amount(cancelled_amount, difference, mode):
     # This function calculates the corrected target amount.
