@@ -132,6 +132,16 @@ def compare_payment_amounts(pos_amounts, cat_amounts):
     return comparison_results
 
 
+def filter_mismatches(comparison_results):
+    mismatch_result = []
+
+    for result in comparison_results:
+        if result["mode"] != "MATCH":
+            mismatch_result.append(result)
+    
+    return mismatch_result
+
+
 def calculate_target_amount(cancelled_amount, difference, mode):
     # This function calculates the corrected target amount.
     #

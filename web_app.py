@@ -6,6 +6,7 @@ from reconciler import(
     PAYMENT_GROUPS,
     reconcile_cat_amounts,
     compare_payment_amounts,
+    filter_mismatches,
     calculate_target_amount,
     find_combinations,
 )
@@ -15,8 +16,13 @@ st.title("Bakery POS Reconciler")
 products = load_menu()
 st.write("商品数:", len(products))
 
-st.header("差額チェック")
 
+# =========================
+# Diffrence Checker
+# 差額計算ツール
+# =========================
+
+st.header("差額チェック")
 
 def cat_input():
     cat_amounts_temp= {}
@@ -51,7 +57,13 @@ def show_difference(comparison_results):
             st.write("CAT側が多い")
         else:
             st.write("合ってます")
-       
+ 
+
+# =========================
+# Correction Helper
+# 差額修正ツール
+# =========================
+
 
 if __name__ == "__main__":
     cat_amounts_temp = cat_input()
@@ -59,3 +71,8 @@ if __name__ == "__main__":
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
     comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
     show_difference(comparison_results)
+    mismatch_results = filter_mismatches(comparison_results)
+    st.write(mismatch_results)
+
+    cancelled_amount = st.number_input("取消金額", min_value=0, step=1)
+    
