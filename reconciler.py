@@ -36,18 +36,20 @@ def load_menu():
             for p in active_products:
                 p["price"] = int(p["price"])
 
+            menu_last_update = data["last_updated"]
+
             # Return the cleaned product list to the caller.
-            return active_products
+            return active_products, menu_last_update
 
     except FileNotFoundError:
         # This runs if menu.json cannot be found.
         print("ファイルが存在しません")
-        return []
+        return [], "不明"
 
     except json.JSONDecodeError:
         # This runs if menu.json exists but the JSON format is broken.
         print("JSONファイル解析エラー")
-        return []
+        return [], "不明"
 
 
 # =========================
@@ -624,7 +626,7 @@ def run_difference_checker():
 
 #Correction helper
 def run_correction_helper():
-    products = load_menu()
+    products, _ = load_menu()
 
     input_cancelled_amount = input_int("取消金額を入力してください＞")
     

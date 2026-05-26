@@ -14,8 +14,9 @@ from reconciler import(
 
 st.title("Bakery POS Reconciler")
 
-products = load_menu()
+products, menu_last_update = load_menu()
 st.write("商品数:", len(products))
+st.write("メニュー更新日:", menu_last_update)
 
 
 # =========================
