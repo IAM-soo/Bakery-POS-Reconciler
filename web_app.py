@@ -163,11 +163,9 @@ if __name__ == "__main__":
     with st.expander("POS金額"):
         pos_amounts = pos_input()
     
-
     with st.expander("CAT金額"):
         cat_amounts_temp = cat_input()
     
-
     st.divider()
 
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
