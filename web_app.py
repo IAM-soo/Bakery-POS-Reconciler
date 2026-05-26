@@ -80,20 +80,34 @@ def pos_input():
     return pos_amounts
 
 
-def show_difference(comparison_results):
+# def show_difference(comparison_results):
+#     for result in comparison_results:
+#         st.write(result["method"])
+#         st.write("POS:", result["pos_amount"])
+#         st.write("CAT:", result["cat_amount"])
+#         st.write("差額:", result["difference"])
+#         if result["mode"] == "POS_GT_CAT":
+#             st.write("POS側が多い")
+#         elif result["mode"] == "CAT_GT_POS":
+#             st.write("CAT側が多い")
+#         else:
+#             st.write("合ってます")
+
+
+def show_difference_summary(comparison_results):
     for result in comparison_results:
-        st.write(result["method"])
-        st.write("POS:", result["pos_amount"])
-        st.write("CAT:", result["cat_amount"])
-        st.write("差額:", result["difference"])
-        if result["mode"] == "POS_GT_CAT":
-            st.write("POS側が多い")
-        elif result["mode"] == "CAT_GT_POS":
-            st.write("CAT側が多い")
+        if result["mode"] == "MATCH":
+            st.write(result["method"], ": OK!")
         else:
-            st.write("合ってます")
-
-
+            st.write(result["method"], " :")
+            st.write("POS:", result["pos_amount"])
+            st.write("CAT:", result["cat_amount"])
+            st.write("差額:", result["difference"])
+            if result["mode"] == "POS_GT_CAT":
+                st.write("POS側が多い")
+            elif result["mode"] == "CAT_GT_POS":
+                st.write("CAT側が多い")
+        
 # Display the correction helper UI.
 #
 # This function uses mismatch_results from the difference checker.
@@ -146,22 +160,28 @@ def show_correction_helper(mismatch_results, products):
 # =========================
 
 if __name__ == "__main__":
-    st.subheader("POS金額")
-    pos_amounts = pos_input()
+    with st.expander("POS金額"):
+        pos_amounts = pos_input()
+    
 
-    st.subheader("CAT金額")
-    cat_amounts_temp = cat_input()
+    with st.expander("CAT金額"):
+        cat_amounts_temp = cat_input()
+    
+
+    st.divider()
 
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
     comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
     
     st.subheader("差額結果")
-    show_difference(comparison_results)
+    show_difference_summary(comparison_results)
     
     mismatch_results = filter_mismatches(comparison_results)
 
-    st.subheader("差額修正ツール")
-    show_correction_helper(mismatch_results, products)
+    st.divider()
+    if len(mismatch_results) > 0:
+        st.subheader("差額修正ツール")
+        show_correction_helper(mismatch_results, products)
 
     
     
