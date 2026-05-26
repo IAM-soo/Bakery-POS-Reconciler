@@ -14,6 +14,25 @@ from reconciler import(
 
 st.title("Bakery POS Reconciler")
 
+if st.button("入力をリセット"):
+    st.session_state.clear()
+    st.rerun()
+
+with st.expander("使い方・注意事項", expanded=False):
+    st.write("""
+    1. POS金額を入力してください。
+    2. CAT端末の各決済金額を入力してください。
+    3. 差額結果を確認してください。
+    4. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
+    5. POSで取消する取引金額を入力してください。
+    6. 目標金額と商品組み合わせ候補を確認してください。
+
+    注意：
+    - まだテスト版です。
+    - 実際に修正する前に、必ずPOS画面とCAT端末の金額を再確認してください。
+    - 候補が出ない場合は、別の取消金額を試してください。
+    """)
+
 products, menu_last_update = load_menu()
 st.write("商品数:", len(products))
 st.write("メニュー更新日:", menu_last_update)
@@ -122,7 +141,7 @@ def show_difference_summary(comparison_results):
 # 5. Display candidate combinations
 
 def show_correction_helper(mismatch_results, products):
-    if len(mismatch_results) != 0:
+    
         mismatch_methods = []
         for result in mismatch_results:
             mismatch_methods.append(result["method"])
@@ -132,27 +151,26 @@ def show_correction_helper(mismatch_results, products):
             if result["method"] == selected_method:
                 st.write("差額:", result["difference"])
                 cancelled_amount = st.number_input("取消金額", min_value=0, step=1)
-                if cancelled_amount > 0:
-                    target_amount = calculate_target_amount(cancelled_amount, result["difference"], result["mode"])
-                    if target_amount <= 0:
-                        st.write("取消金額が差額より小さいため修正できません")
-                    else:
-                        st.write("目標金額", target_amount)
-                        combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
-                        if len(combinations) > 0:
-                            formatted_combinations = format_combinations(combinations)
-                            for formatted_combination in formatted_combinations:
-                                combination_number = formatted_combination["combination_number"]
-                                items = formatted_combination["items"]
-                                st.write("組合", combination_number)
-                                for item in items:
-                                    st.write("-", item["item_name"], item["price"], "x", item["quantity"])
+                
+                target_amount = calculate_target_amount(cancelled_amount, result["difference"], result["mode"])
+                if target_amount <= 0:
+                    st.write("取消金額が差額より小さいため修正できません")
+                else:
+                    st.write("目標金額", target_amount)
+                    combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
+                    if len(combinations) > 0:
+                        formatted_combinations = format_combinations(combinations)
+                        for formatted_combination in formatted_combinations:
+                            combination_number = formatted_combination["combination_number"]
+                            items = formatted_combination["items"]
+                            st.write("組合", combination_number)
+                            for item in items:
+                                st.write("-", item["item_name"], item["price"], "x", item["quantity"])
                         
-                                st.write("総額:", formatted_combination["total"])
-                        else:
-                            st.write("候補なし")
-    else:
-        st.write("全部合ってます")
+                            st.write("総額:", formatted_combination["total"])
+                    else:
+                        st.write("候補なし")
+
 
 
 # =========================
