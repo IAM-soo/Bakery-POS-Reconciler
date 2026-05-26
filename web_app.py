@@ -74,5 +74,22 @@ if __name__ == "__main__":
     mismatch_results = filter_mismatches(comparison_results)
     st.write(mismatch_results)
 
-    cancelled_amount = st.number_input("取消金額", min_value=0, step=1)
+    
+    if len(mismatch_results) != 0:
+        mismatch_methods = []
+        for result in mismatch_results:
+            mismatch_methods.append(result["method"])
+
+        selected_method = st.selectbox("修正する項目", mismatch_methods)
+        for result in mismatch_results:
+            if result["method"] == selected_method:
+                cancelled_amount = st.number_input("取消金額", min_value=0, step=1)
+                target_amount = calculate_target_amount(cancelled_amount, result["difference"], result["mode"])
+                st.write(target_amount)
+                result = find_combinations(products, target_amount, max_items=8, max_results=3)
+                st.write(result)
+
+
+    
+    
     
