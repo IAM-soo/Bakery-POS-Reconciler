@@ -25,6 +25,25 @@ st.write("商品数:", len(products))
 
 st.header("差額チェック")
 
+# Create CAT input fields in the web app.
+#
+# Output:
+# cat_amounts_temp
+#
+# cat_amounts_temp is the raw CAT-side detail dictionary.
+# Its keys are CAT detail methods, not POS categories.
+#
+# Example:
+# cat_amounts_temp = {
+#     "楽天Edy": 3000,
+#     "iD": 2000,
+#     "PayPay": 4000,
+#     "Alipay": 1000
+# }
+#
+# This data cannot be directly compared with pos_amounts yet.
+# It must be converted by reconcile_cat_amounts().
+
 def cat_input():
     cat_amounts_temp= {}
 
@@ -36,6 +55,21 @@ def cat_input():
 
     return cat_amounts_temp
 
+
+# Create POS input fields in the web app.
+#
+# Output:
+# pos_amounts
+#
+# pos_amounts is already grouped by POS categories.
+#
+# Example:
+# pos_amounts = {
+#     "クレジットカード": 12000,
+#     "交通系IC": 3500,
+#     "電子マネー": 10000,
+#     "国内QR": 7600
+# }
 
 def pos_input():
     pos_amounts ={}
@@ -58,7 +92,20 @@ def show_difference(comparison_results):
             st.write("CAT側が多い")
         else:
             st.write("合ってます")
- 
+
+
+# Display the correction helper UI.
+#
+# This function uses mismatch_results from the difference checker.
+# The user does not need to input difference or mode again.
+#
+# Flow:
+# 1. Select one mismatched payment method
+# 2. Input cancelled POS transaction amount
+# 3. Calculate target amount
+# 4. Search product combinations
+# 5. Display candidate combinations
+
 def show_correction_helper(mismatch_results, products):
     if len(mismatch_results) != 0:
         mismatch_methods = []
@@ -91,11 +138,12 @@ def show_correction_helper(mismatch_results, products):
                             st.write("候補なし")
     else:
         st.write("全部合ってます")
+
+
 # =========================
 # Correction Helper
 # 差額修正ツール
 # =========================
-
 
 if __name__ == "__main__":
     cat_amounts_temp = cat_input()

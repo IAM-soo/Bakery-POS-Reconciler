@@ -5,6 +5,7 @@ import os
 # =========================
 # Data loading
 # =========================
+
 def load_menu():
     # __file__ means the path of this Python file.
     # os.path.dirname(__file__) gets the folder that contains this file.
@@ -53,7 +54,16 @@ def load_menu():
 # Payment method definitions
 # =========================
 
-#POS
+# POS side payment categories.
+# These are the final categories shown on the POS system.
+# pos_amounts will use these names as dictionary keys.
+#
+# Example:
+# pos_amounts = {
+#     "クレジットカード": 12000,
+#     "電子マネー": 10000,
+#     "国内QR": 7600
+# }
 POS_METHODS = [
     "クレジットカード",
     "交通系IC",
@@ -63,11 +73,38 @@ POS_METHODS = [
     "金券",
 ]
 
-#CAT
+
+# CAT-side payment detail method definitions.
+#
+# These lists define the payment methods shown separately on the CAT terminal.
+# They do not store amounts.
+#
+# Example:
+# cat_amounts_temp = {
+#     "楽天Edy": 3000,
+#     "iD": 2000,
+#     "PayPay": 4000
+# }
+#
+# These method lists are used by PAYMENT_GROUPS to map CAT details
+# back into POS-style payment categories.
+
 CAT_EMONEY_METHODS = ["楽天Edy", "iD", "QUICPay", "WAON", "nanaco"]
 CAT_JPQR_METHODS = ["楽天Pay", "PayPay", "au PAY", "d払い", "J-Coin Pay"]
 CAT_CHQR_METHODS = ["Alipay", "WeChatPay"]
 
+
+# Mapping between POS categories and CAT detail methods.
+#
+# POS groups some payment methods together.
+# CAT may show them separately.
+#
+# Example:
+# POS "電子マネー"
+# = CAT "楽天Edy" + "iD" + "QUICPay" + "WAON" + "nanaco"
+#
+# This mapping is used by reconcile_cat_amounts()
+# to convert CAT detail amounts into POS-style category amounts.
 PAYMENT_GROUPS = {
     "クレジットカード": ["クレジットカード"],
     "交通系IC": ["交通系IC"],
@@ -92,6 +129,29 @@ def calculate_selected_payment_total(payment_amounts, selected_methods):
         total += payment_amounts.get(method, 0)
     return total
 
+
+# Convert CAT raw detail amounts into POS-style category amounts.
+#
+# Input:
+# cat_amounts_temp
+# {
+#     "楽天Edy": 3000,
+#     "iD": 2000,
+#     "QUICPay": 1800,
+#     "WAON": 1000,
+#     "nanaco": 1990
+# }
+#
+# Output:
+# cat_amounts
+# {
+#     "電子マネー": 9790,
+#     "国内QR": 7600,
+#     "中国QR": 1500
+# }
+#
+# The output uses the same keys as pos_amounts,
+# so compare_payment_amounts() can compare them directly.
 
 def reconcile_cat_amounts(cat_amounts_temp):
     cat_amounts = {}
@@ -118,6 +178,35 @@ def calculate_difference(pos_amount, cat_amount):
         return (difference, mode)
 
 
+# Compare POS category amounts with reconciled CAT category amounts.
+#
+# Input:
+# pos_amounts:
+# {
+#     "電子マネー": 10000,
+#     "国内QR": 7600
+# }
+#
+# cat_amounts:
+# {
+#     "電子マネー": 9790,
+#     "国内QR": 7600
+# }
+#
+# Output:
+# comparison_results is a list of dictionaries.
+#
+# Example:
+# comparison_results = [
+#     {
+#         "method": "電子マネー",
+#         "pos_amount": 10000,
+#         "cat_amount": 9790,
+#         "difference": 210,
+#         "mode": "POS_GT_CAT"
+#     }
+# ]
+
 def compare_payment_amounts(pos_amounts, cat_amounts):
     comparison_results = []
     for method in POS_METHODS:
@@ -131,6 +220,26 @@ def compare_payment_amounts(pos_amounts, cat_amounts):
 
     return comparison_results
 
+
+# Extract only mismatched payment results.
+#
+# Input:
+# comparison_results
+#
+# Output:
+# mismatch_results
+#
+# mismatch_results keeps only results where mode is not "MATCH".
+#
+# Example:
+# comparison_results = [
+#     {"method": "クレジットカード", "mode": "MATCH"},
+#     {"method": "電子マネー", "mode": "POS_GT_CAT"}
+# ]
+#
+# mismatch_results = [
+#     {"method": "電子マネー", "mode": "POS_GT_CAT"}
+# ]
 
 def filter_mismatches(comparison_results):
     mismatch_result = []
@@ -324,6 +433,39 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
 # =========================
 # Output formatting
 # =========================
+
+# Convert raw product combinations into display-friendly data.
+#
+# Input:
+# combinations
+# [
+#     [product, product, product],
+#     [product, product]
+# ]
+#
+# Output:
+# formatted_combinations
+#
+# formatted_combinations is a list of dictionaries.
+# Each dictionary represents one possible product combination.
+#
+# Example:
+# formatted_combinations = [
+#     {
+#         "combination_number": 1,
+#         "items": [
+#             {
+#                 "item_name": "トリュフ塩パン",
+#                 "price": 318,
+#                 "quantity": 2
+#             }
+#         ],
+#         "total": 636
+#     }
+# ]
+#
+# item_counts is used internally to merge the same product
+# into one row with quantity.
 
 def format_combinations(combinations):
     # enumerate(combinations, start=1) gives:
