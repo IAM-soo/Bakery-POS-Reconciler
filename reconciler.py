@@ -323,9 +323,43 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
 
 # =========================
 # Output formatting
-# CLI only for now
 # =========================
 
+def format_combinations(combinations):
+    # enumerate(combinations, start=1) gives:
+    # combination_number = 1, combination = first combination
+    # combination_number = 2, combination = second combination
+    formatted_combinations = []
+
+    for combination_number, combination in enumerate(combinations, start=1):
+
+        # Store the total price of this combination.
+        total = 0
+        item_counts = {}
+        for product in combination:
+            product_id = product["id"]
+
+            # Add this product price to the total.
+            total += product["price"]
+
+            # If this product id appears for the first time,
+            # create a new record in item_counts.
+            if product_id not in item_counts:
+                item_counts[product_id] = {
+                    "item_name": product["item_name"],
+                    "price": product["price"],
+                    "quantity": 0
+                }
+
+            # Increase the quantity of this product by 1.
+            item_counts[product_id]["quantity"] += 1
+
+        formatted_combination = {"combination_number":combination_number, "items":list(item_counts.values()), "total":total}
+        formatted_combinations.append(formatted_combination)
+    
+    return formatted_combinations
+        
+        
 def print_combinations(combinations):
     # Print each valid combination.
     #
