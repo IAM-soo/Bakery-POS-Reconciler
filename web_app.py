@@ -14,9 +14,14 @@ from reconciler import(
 
 st.title("Bakery POS Reconciler")
 
+if "reset_count" not in st.session_state:
+    st.session_state["reset_count"] = 0
+
 if st.button("入力をリセット"):
-    st.session_state.clear()
+    st.session_state["reset_count"] += 1
     st.rerun()
+
+reset_count = st.session_state["reset_count"]
 
 with st.expander("使い方・注意事項", expanded=False):
     st.write("""
@@ -64,14 +69,14 @@ st.header("差額チェック")
 # This data cannot be directly compared with pos_amounts yet.
 # It must be converted by reconcile_cat_amounts().
 
-def cat_input():
+def cat_input(reset_count):
     cat_amounts_temp= {}
 
     for payment_group in PAYMENT_GROUPS:
         cat_methods = PAYMENT_GROUPS[payment_group]
 
         for cat_method in cat_methods:
-            cat_amounts_temp[cat_method] = st.number_input(cat_method, min_value=0, step=1, key="cat_" + cat_method)
+            cat_amounts_temp[cat_method] = st.number_input(cat_method, min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
 
     return cat_amounts_temp
 
@@ -91,11 +96,11 @@ def cat_input():
 #     "国内QR": 7600
 # }
 
-def pos_input():
+def pos_input(reset_count):
     pos_amounts ={}
     
     for pos_method in POS_METHODS:
-        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, step=1, key="pos_" + pos_method)
+        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=0, step=1, key="pos_" + pos_method + "_" + str(reset_count))
 
     return pos_amounts
 
@@ -150,14 +155,14 @@ def show_correction_helper(mismatch_results, products):
         for result in mismatch_results:
             if result["method"] == selected_method:
                 st.write("差額:", result["difference"])
-                cancelled_amount = st.number_input("取消金額", min_value=0, step=1)
+                cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
                 
                 target_amount = calculate_target_amount(cancelled_amount, result["difference"], result["mode"])
                 if target_amount <= 0:
                     st.write("取消金額が差額より小さいため修正できません")
                 else:
                     st.write("目標金額", target_amount)
-                    combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
+                    combinations = find_combinations(products, target_amount, max_items=8, max_results=3, )
                     if len(combinations) > 0:
                         formatted_combinations = format_combinations(combinations)
                         for formatted_combination in formatted_combinations:
@@ -180,10 +185,10 @@ def show_correction_helper(mismatch_results, products):
 
 if __name__ == "__main__":
     with st.expander("POS金額"):
-        pos_amounts = pos_input()
+        pos_amounts = pos_input(reset_count)
     
     with st.expander("CAT金額"):
-        cat_amounts_temp = cat_input()
+        cat_amounts_temp = cat_input(reset_count)
     
     st.divider()
 
