@@ -146,12 +146,21 @@ def show_correction_helper(mismatch_results, products):
 # =========================
 
 if __name__ == "__main__":
-    cat_amounts_temp = cat_input()
+    st.subheader("POS金額")
     pos_amounts = pos_input()
+
+    st.subheader("CAT金額")
+    cat_amounts_temp = cat_input()
+
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
     comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
+    
+    st.subheader("差額結果")
     show_difference(comparison_results)
+    
     mismatch_results = filter_mismatches(comparison_results)
+
+    st.subheader("差額修正ツール")
     show_correction_helper(mismatch_results, products)
 
     
