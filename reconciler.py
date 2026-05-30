@@ -69,10 +69,10 @@ def load_menu():
 POS_METHODS = [
     "クレジットカード",
     "交通系IC",
-    "電子マネー",
+    "金券",
     "国内QR",
     "中国QR",
-    "金券",
+    "電子マネー",
 ]
 
 
@@ -110,10 +110,10 @@ CAT_CHQR_METHODS = ["Alipay", "WeChatPay"]
 PAYMENT_GROUPS = {
     "クレジットカード": ["クレジットカード"],
     "交通系IC": ["交通系IC"],
-    "金券": ["金券"],
-    "国内QR": CAT_JPQR_METHODS,
-    "中国QR": CAT_CHQR_METHODS,
     "電子マネー": CAT_EMONEY_METHODS,
+    "中国QR": CAT_CHQR_METHODS,
+    "国内QR": CAT_JPQR_METHODS,
+    "金券": ["金券"],
 }
 
 # =========================

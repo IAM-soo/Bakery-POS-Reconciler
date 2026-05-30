@@ -76,11 +76,15 @@ def cat_input(reset_count):
         cat_methods = PAYMENT_GROUPS[payment_group]
 
         for cat_method in cat_methods:
-            cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method + " 売上", min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
+            cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method + " 売上", min_value=0, value=None, step=1, key="cat_" + cat_method + "_" + str(reset_count))
+            if cat_amounts_temp[cat_method + "_sales"] == None:
+                cat_amounts_temp[cat_method + "_sales"] = 0
             
             cat_method_cancel = st.checkbox("取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
             if cat_method_cancel:
-                cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=0, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
+                cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
+                if cat_amounts_temp[cat_method + "_cancel"] == None:
+                    cat_amounts_temp[cat_method + "_cancel"] = 0
             else:
                 cat_amounts_temp[cat_method + "_cancel"] = 0
 
@@ -108,8 +112,9 @@ def pos_input(reset_count):
     pos_amounts ={}
     
     for pos_method in POS_METHODS:
-        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=0, step=1, key="pos_" + pos_method + "_" + str(reset_count))
-
+        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=None, step=1, key="pos_" + pos_method + "_" + str(reset_count))
+        if pos_amounts[pos_method] == None:
+            pos_amounts[pos_method] = 0
     return pos_amounts
 
 
@@ -140,6 +145,7 @@ def show_difference_summary(comparison_results):
                 st.write("POS側が多い")
             elif result["mode"] == "CAT_GT_POS":
                 st.write("CAT側が多い")
+        st.divider()
         
 # Display the correction helper UI.
 #
