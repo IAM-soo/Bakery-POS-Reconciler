@@ -128,7 +128,7 @@ def calculate_payment_total(payment_amounts):
 def calculate_selected_payment_total(payment_amounts, selected_methods):
     total = 0
     for method in selected_methods:
-        total += payment_amounts.get(method, 0)
+        total += payment_amounts.get(method + "_sales", 0) - payment_amounts.get(method + "_cancel", 0) 
     return total
 
 
@@ -157,7 +157,6 @@ def calculate_selected_payment_total(payment_amounts, selected_methods):
 
 def reconcile_cat_amounts(cat_amounts_temp):
     cat_amounts = {}
-
     for payment_method in POS_METHODS:
         selected_methods = PAYMENT_GROUPS[payment_method]
         cat_amounts[payment_method] = calculate_selected_payment_total(cat_amounts_temp, selected_methods)

@@ -76,7 +76,8 @@ def cat_input(reset_count):
         cat_methods = PAYMENT_GROUPS[payment_group]
 
         for cat_method in cat_methods:
-            cat_amounts_temp[cat_method] = st.number_input(cat_method, min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
+            cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method, min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
+            cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + "取消", min_value=0, value=0, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
 
     return cat_amounts_temp
 
