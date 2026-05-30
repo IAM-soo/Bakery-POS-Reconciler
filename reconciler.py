@@ -501,7 +501,23 @@ def format_combinations(combinations):
         formatted_combinations.append(formatted_combination)
     
     return formatted_combinations
+
+
+def get_mismatch_methods(mismatch_results):
+    mismatch_methods = []
+    for result in mismatch_results:
+        mismatch_methods.append(result["method"])
+    
+    return mismatch_methods
+
+
+def find_result_by_method(mismatch_results, selected_method):
+    for result in mismatch_results:
+        if result["method"] == selected_method:
+            selected_result = result
         
+    return selected_result
+
         
 def print_combinations(combinations):
     # Print each valid combination.

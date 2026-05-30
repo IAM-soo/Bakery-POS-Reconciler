@@ -9,7 +9,9 @@ from reconciler import(
     filter_mismatches,
     calculate_target_amount,
     find_combinations,
-    format_combinations
+    format_combinations,
+    get_mismatch_methods,
+    find_result_by_method
 )
 
 st.title("Bakery POS Reconciler")
@@ -118,20 +120,6 @@ def pos_input(reset_count):
     return pos_amounts
 
 
-# def show_difference(comparison_results):
-#     for result in comparison_results:
-#         st.write(result["method"])
-#         st.write("POS:", result["pos_amount"])
-#         st.write("CAT:", result["cat_amount"])
-#         st.write("差額:", result["difference"])
-#         if result["mode"] == "POS_GT_CAT":
-#             st.write("POS側が多い")
-#         elif result["mode"] == "CAT_GT_POS":
-#             st.write("CAT側が多い")
-#         else:
-#             st.write("合ってます")
-
-
 def show_difference_summary(comparison_results):
     for result in comparison_results:
         if result["mode"] == "MATCH":
@@ -146,50 +134,17 @@ def show_difference_summary(comparison_results):
             elif result["mode"] == "CAT_GT_POS":
                 st.write("CAT側が多い")
         st.divider()
-        
-# Display the correction helper UI.
-#
-# This function uses mismatch_results from the difference checker.
-# The user does not need to input difference or mode again.
-#
-# Flow:
-# 1. Select one mismatched payment method
-# 2. Input cancelled POS transaction amount
-# 3. Calculate target amount
-# 4. Search product combinations
-# 5. Display candidate combinations
 
-def show_correction_helper(mismatch_results, products):
-    
-        mismatch_methods = []
-        for result in mismatch_results:
-            mismatch_methods.append(result["method"])
-        
-        selected_method = st.selectbox("修正する項目", mismatch_methods)
-        for result in mismatch_results:
-            if result["method"] == selected_method:
-                st.write("差額:", result["difference"])
-                cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
-                
-                target_amount = calculate_target_amount(cancelled_amount, result["difference"], result["mode"])
-                if target_amount <= 0:
-                    st.write("取消金額が差額より小さいため修正できません")
-                else:
-                    st.write("目標金額", target_amount)
-                    combinations = find_combinations(products, target_amount, max_items=8, max_results=3, )
-                    if len(combinations) > 0:
-                        formatted_combinations = format_combinations(combinations)
-                        for formatted_combination in formatted_combinations:
-                            combination_number = formatted_combination["combination_number"]
-                            items = formatted_combination["items"]
-                            st.write("組合", combination_number)
-                            for item in items:
-                                st.write("-", item["item_name"], item["price"], "x", item["quantity"])
-                        
-                            st.write("総額:", formatted_combination["total"])
-                    else:
-                        st.write("候補なし")
 
+def show_combination_results(formatted_combinations):
+    for formatted_combination in formatted_combinations:
+        combination_number = formatted_combination["combination_number"]
+        items = formatted_combination["items"]
+        st.write("組合", combination_number)
+        for item in items:
+            st.write("-", item["item_name"], item["price"], "x", item["quantity"])
+        
+        st.write("総額:", formatted_combination["total"])
 
 
 # =========================
@@ -214,11 +169,28 @@ if __name__ == "__main__":
     
     mismatch_results = filter_mismatches(comparison_results)
 
-    st.divider()
     if len(mismatch_results) > 0:
+        st.divider()
         st.subheader("差額修正ツール")
-        show_correction_helper(mismatch_results, products)
+        mismatch_methods = get_mismatch_methods(mismatch_results)
 
+        selected_method = st.selectbox("修正する項目", mismatch_methods)
+        selected_result = find_result_by_method(mismatch_results, selected_method)
+
+        st.write("差額:", selected_result["difference"])
+        cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
+
+        target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
+        if target_amount <= 0:
+            st.write("取消金額が差額より小さいため修正できません")
+        else:
+            st.write("目標金額", target_amount)
+            combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
+            if len(combinations) > 0:
+                formatted_combinations = format_combinations(combinations)
+                show_combination_results(formatted_combinations)
+            else:
+                st.write("候補なし")
     
     
 
