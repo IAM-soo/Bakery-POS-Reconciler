@@ -92,7 +92,7 @@ POS_METHODS = [
 # back into POS-style payment categories.
 
 CAT_EMONEY_METHODS = ["楽天Edy", "iD", "QUICPay", "WAON", "nanaco"]
-CAT_JPQR_METHODS = ["楽天Pay", "PayPay", "au PAY", "d払い", "J-Coin Pay"]
+CAT_JPQR_METHODS = ["d払い", "PayPay", "au PAY", "楽天ペイ", "J-Coin Pay"]
 CAT_CHQR_METHODS = ["Alipay", "WeChatPay"]
 
 
@@ -110,10 +110,10 @@ CAT_CHQR_METHODS = ["Alipay", "WeChatPay"]
 PAYMENT_GROUPS = {
     "クレジットカード": ["クレジットカード"],
     "交通系IC": ["交通系IC"],
-    "電子マネー": CAT_EMONEY_METHODS,
+    "金券": ["金券"],
     "国内QR": CAT_JPQR_METHODS,
     "中国QR": CAT_CHQR_METHODS,
-    "金券": ["金券"],
+    "電子マネー": CAT_EMONEY_METHODS,
 }
 
 # =========================

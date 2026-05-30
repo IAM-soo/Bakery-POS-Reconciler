@@ -76,8 +76,15 @@ def cat_input(reset_count):
         cat_methods = PAYMENT_GROUPS[payment_group]
 
         for cat_method in cat_methods:
-            cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method, min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
-            cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + "取消", min_value=0, value=0, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
+            cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method + " 売上", min_value=0, value=0, step=1, key="cat_" + cat_method + "_" + str(reset_count))
+            
+            cat_method_cancel = st.checkbox("取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
+            if cat_method_cancel:
+                cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=0, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
+            else:
+                cat_amounts_temp[cat_method + "_cancel"] = 0
+
+        st.divider()
 
     return cat_amounts_temp
 
