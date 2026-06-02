@@ -125,6 +125,27 @@ def calculate_payment_total(payment_amounts):
     return sum(payment_amounts.values())
 
 
+# Purpose:
+#   Calculate the net total for selected CAT payment methods.
+#
+# Input:
+#   payment_amounts
+#   selected_methods
+#
+# Output:
+#   total
+#
+# Data shape:
+#   payment_amounts = {
+#       "楽天Edy_sales": 3000,
+#       "楽天Edy_cancel": 500,
+#       "iD_sales": 2000,
+#       "iD_cancel": 0
+#   }
+
+# Note:
+#   Net amount is calculated as sales - cancel.
+
 def calculate_selected_payment_total(payment_amounts, selected_methods):
     total = 0
     for method in selected_methods:
@@ -132,28 +153,30 @@ def calculate_selected_payment_total(payment_amounts, selected_methods):
     return total
 
 
-# Convert CAT raw detail amounts into POS-style category amounts.
+# Purpose:
+#   Convert CAT detail amounts into POS-style category totals.
 #
 # Input:
-# cat_amounts_temp
-# {
-#     "楽天Edy": 3000,
-#     "iD": 2000,
-#     "QUICPay": 1800,
-#     "WAON": 1000,
-#     "nanaco": 1990
-# }
+#   cat_amounts_temp
 #
 # Output:
-# cat_amounts
-# {
-#     "電子マネー": 9790,
-#     "国内QR": 7600,
-#     "中国QR": 1500
-# }
+#   cat_amounts
 #
-# The output uses the same keys as pos_amounts,
-# so compare_payment_amounts() can compare them directly.
+# Data shape:
+#   cat_amounts_temp = {
+#       "楽天Edy_sales": 3000,
+#       "楽天Edy_cancel": 500,
+#       "iD_sales": 2000,
+#       "iD_cancel": 0
+#   }
+#
+#   cat_amounts = {
+#       "電子マネー": 4500,
+#       "国内QR": 7600
+#   }
+#
+# Note:
+#   The output keys match POS_METHODS, so compare_payment_amounts() can compare POS and CAT directly.
 
 def reconcile_cat_amounts(cat_amounts_temp):
     cat_amounts = {}
@@ -291,6 +314,7 @@ def calculate_target_amount(cancelled_amount, difference, mode):
         # If mode is not recognized, return None.
         print("Invalid mode")
         return None
+
 
 def find_combinations(products, target_amount, max_items=8, max_results=3):
     # This function searches for product combinations
@@ -503,6 +527,18 @@ def format_combinations(combinations):
     return formatted_combinations
 
 
+# Purpose:
+#   Extract payment method names from mismatch_results for Streamlit selectbox.
+#
+# Input:
+#   mismatch_results
+#
+# Output:
+#   mismatch_methods
+#
+# Data shape:
+#   mismatch_methods = ["電子マネー", "国内QR"]
+
 def get_mismatch_methods(mismatch_results):
     mismatch_methods = []
     for result in mismatch_results:
@@ -510,6 +546,19 @@ def get_mismatch_methods(mismatch_results):
     
     return mismatch_methods
 
+
+# Purpose:
+#   Find the full mismatch result dictionary by selected payment method.
+#
+# Input:
+#   mismatch_results
+#   selected_method
+#
+# Output:
+#   selected_result
+#
+# Note:
+#   selected_method comes from mismatch_methods, so it should normally exist in mismatch_results.
 
 def find_result_by_method(mismatch_results, selected_method):
     for result in mismatch_results:
