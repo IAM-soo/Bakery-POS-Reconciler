@@ -51,6 +51,12 @@ def load_menu():
         print("JSONファイル解析エラー")
         return [], "不明"
 
+    except ValueError:
+        # This runs if a product price cannot be converted to an integer.
+        # Example: price is "三百円" or "298円" instead of "298".
+        print("メニューの価格データが正しくありません")
+        return [], "不明"
+
 
 # =========================
 # Payment method definitions
