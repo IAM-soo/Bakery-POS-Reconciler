@@ -88,6 +88,8 @@ def cat_input(reset_count):
                 cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
                 if cat_amounts_temp[cat_method + "_cancel"] == None:
                     cat_amounts_temp[cat_method + "_cancel"] = 0
+                elif cat_amounts_temp[cat_method + "_cancel"] > cat_amounts_temp[cat_method + "_sales"]:
+                    st.warning("取消金額が売上金額より大きいです。入力内容を確認してください。")
             else:
                 cat_amounts_temp[cat_method + "_cancel"] = 0
 
