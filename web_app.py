@@ -245,9 +245,21 @@ if __name__ == "__main__":
         selected_result = find_result_by_method(mismatch_results, selected_method)
 
         st.write("差額:", selected_result["difference"])
+
+        if selected_result["mode"] == "POS_GT_CAT":
+            st.write("POS側が多いです。")
+            st.write("POSの注文履歴から取消する取引を1つ選び、その金額を入力してください。")
+        elif selected_result["mode"] == "CAT_GT_POS":
+            st.write("CAT側が多いです。")
+            st.write("POS側に差額分を追加できる可能性があります。")
+            st.write("合う候補がない場合は、POSで取消する取引金額を入力してください。")
+
         cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
 
         target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
+
+        st.divider()
+
         if target_amount <= 0:
             st.write("取消金額が差額より小さいため修正できません")
         else:
