@@ -260,9 +260,7 @@ if __name__ == "__main__":
 
         target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
 
-        if target_amount <= 0:
-            st.write("取消金額が差額より小さいため修正できません")
-        else:
+        if target_amount > 0:
             st.write("目標金額", target_amount)
             st.divider()
             combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
@@ -271,6 +269,8 @@ if __name__ == "__main__":
                 show_combination_results(formatted_combinations)
             else:
                 st.write("候補なし")
+        else:
+            st.write("取消金額が差額より小さいため修正できません")
     
     
 
