@@ -22,7 +22,7 @@ from reconciler import(
 # Create POS amount input fields
 #
 # Input:
-#   rest_count
+#   reset_count
 #
 # Output:
 #   pos_amounts
@@ -37,7 +37,7 @@ from reconciler import(
 # Note:
 #   POS amounts are already grouped by POS categories
 #   If input is blank, assume as 0
-#   rest_count is used to reset Streamlit widget keys
+#   reset_count is used to reset Streamlit widget keys
 
 def pos_input(reset_count):
     pos_amounts ={}
@@ -56,7 +56,7 @@ def pos_input(reset_count):
 #   rest_count
 #
 # Output:
-#   cat_amount_temp
+#   cat_amounts_temp
 #
 # Data shape:
 #   {
@@ -83,7 +83,7 @@ def cat_input(reset_count):
             if cat_amounts_temp[cat_method + "_sales"] == None:
                 cat_amounts_temp[cat_method + "_sales"] = 0
             
-            cat_method_cancel = st.checkbox("取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
+            cat_method_cancel = st.checkbox(cat_method + "  取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
             if cat_method_cancel:
                 cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
                 if cat_amounts_temp[cat_method + "_cancel"] == None:
@@ -97,7 +97,7 @@ def cat_input(reset_count):
 
 
 # Purpose:
-#   Dispaly comparison results in Streamlit app
+#   Display comparison results in Streamlit app
 #
 # Input:
 #   comparison_results
@@ -118,7 +118,7 @@ def cat_input(reset_count):
 #
 # Note:
 #   MATCH results show shortly as OK
-#   Mismatched result show detail of ecah amount, difference and mode
+#   Mismatched result show detail of each amount, difference and mode
 
 def show_difference_summary(comparison_results):
     for result in comparison_results:
@@ -161,8 +161,8 @@ def show_difference_summary(comparison_results):
 #   ]
 #
 # Note:
-#   This function only show data
-#   Product grouping is already done by formatted_combinations()
+#   This function only display data
+#   Product grouping is already done by format_combinations()
 
 def show_combination_results(formatted_combinations):
     for formatted_combination in formatted_combinations:
