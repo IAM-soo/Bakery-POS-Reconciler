@@ -83,3 +83,29 @@ Understanding the two correction modes is essential for working on the correctio
 | `python reconciler.py` | CLI tool for quick checks (difference checker or correction helper) |
 
 The CLI functions (`run_difference_checker`, `run_correction_helper`) are defined inside the `if __name__ == "__main__"` block and are never called by the web app.
+
+## Communication Style
+
+Always explain and respond in **Traditional Chinese (Hong Kong style)**. Keep technical terms and programming keywords in English (e.g. branch, commit, session_state, function). Explain reasoning behind every change — the goal is learning and portfolio building, not just working code.
+
+## Reference Repo
+
+A second repo exists at `../ww-golf-miniapp-backend` and is **read-only**. Do not edit any files in it. Use it only to understand engineering practices (pre-commit setup, gitignore conventions, requirements pinning). Do not copy its architecture — it is a FastAPI backend and structurally different from this Streamlit app.
+
+## Current Work in Progress
+
+Active branch: `feat/web-app`
+
+Goal: Improve project structure by borrowing engineering practices from the reference repo, without changing the app architecture.
+
+| Step | Task | Status |
+|---|---|---|
+| 1 | Fix `.gitignore` (add `venv/`, `__pycache__/`, `.env`) | ✅ Done |
+| 2 | Improve `web_app.py` (add `st.set_page_config`, remove unnecessary `if __name__` guard) | 🔄 In Progress |
+| 3 | Pin `requirements.txt` with exact versions | ⏳ Pending |
+| 4 | Add `.pre-commit-config.yaml` (black + pytest) | ⏳ Pending |
+
+### Step 2 Notes
+`web_app.py` already exists and is well structured. Only two small fixes needed:
+- `st.set_page_config` is missing — should be the very first Streamlit call at the top of the file
+- `if __name__ == "__main__":` guard wrapping the main flow is unnecessary in Streamlit and should be removed
