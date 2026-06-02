@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Set up environment (first time)
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirments.txt   # note: filename is intentionally misspelled
+pip install -r requirements.txt
 
 # Run the web app
 streamlit run web_app.py
@@ -16,8 +16,6 @@ streamlit run web_app.py
 # Run the CLI tool
 python reconciler.py
 ```
-
-> **Note:** The requirements file is named `requirments.txt` (missing 'e') — this is a known typo in the filename; do not rename it without updating `.devcontainer/devcontainer.json`.
 
 ## Collaboration Style
 
