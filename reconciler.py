@@ -317,6 +317,9 @@ def calculate_target_amount(cancelled_amount, difference, mode):
 
 
 def find_combinations(products, target_amount, max_items=8, max_results=3):
+    if target_amount <= 0:
+        return []
+
     # This function searches for product combinations
     # whose total price is exactly equal to target_amount.
     #
