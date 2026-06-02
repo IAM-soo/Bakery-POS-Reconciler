@@ -561,10 +561,11 @@ def get_mismatch_methods(mismatch_results):
 #   selected_method comes from mismatch_methods, so it should normally exist in mismatch_results.
 
 def find_result_by_method(mismatch_results, selected_method):
+    selected_result = None
     for result in mismatch_results:
         if result["method"] == selected_method:
             selected_result = result
-        
+
     return selected_result
 
         

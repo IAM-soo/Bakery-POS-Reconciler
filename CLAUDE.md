@@ -27,6 +27,16 @@ python reconciler.py
 - Explain code in simple, step-by-step terms — the goal is understanding, not just working code.
 - Do not add new dependencies or change unrelated files.
 
+## Learning / Interview Goal
+
+I am using Claude Code to help me understand and improve this project for learning and portfolio purposes.
+
+When explaining changes:
+- Help me understand the reasoning behind the code.
+- Point out what I should be able to explain in an interview.
+- Prefer explanations that connect the code to the real bakery workflow.
+- If there are multiple possible solutions, explain the trade-offs before choosing one.
+
 ## Architecture
 
 Two-file design: all business logic lives in `reconciler.py`, and `web_app.py` is a pure Streamlit UI layer that imports from it.
