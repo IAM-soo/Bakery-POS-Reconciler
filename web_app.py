@@ -14,62 +14,63 @@ from reconciler import(
     find_result_by_method
 )
 
-st.title("Bakery POS Reconciler")
-
-if "reset_count" not in st.session_state:
-    st.session_state["reset_count"] = 0
-
-if st.button("入力をリセット"):
-    st.session_state["reset_count"] += 1
-    st.rerun()
-
-reset_count = st.session_state["reset_count"]
-
-with st.expander("使い方・注意事項", expanded=False):
-    st.write("""
-    1. POS金額を入力してください。
-    2. CAT端末の各決済金額を入力してください。
-    3. 差額結果を確認してください。
-    4. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
-    5. POSで取消する取引金額を入力してください。
-    6. 目標金額と商品組み合わせ候補を確認してください。
-
-    注意：
-    - まだテスト版です。
-    - 実際に修正する前に、必ずPOS画面とCAT端末の金額を再確認してください。
-    - 候補が出ない場合は、別の取消金額を試してください。
-    """)
-
-products, menu_last_update = load_menu()
-st.write("商品数:", len(products))
-st.write("メニュー更新日:", menu_last_update)
-
-
 # =========================
-# Diffrence Checker
-# 差額計算ツール
+# UI helper function
 # =========================
 
-st.header("差額チェック")
-
-# Create CAT input fields in the web app.
+# Purpose:
+# Create POS amount input fields
+#
+# Input:
+#   rest_count
 #
 # Output:
-# cat_amounts_temp
+#   pos_amounts
 #
-# cat_amounts_temp is the raw CAT-side detail dictionary.
-# Its keys are CAT detail methods, not POS categories.
+# Data shape:
+#   {
+#       "クレジットカード": 12000,
+#       "電子マネー": 10000,
+#       "国内QR": 7600
+#   }
 #
-# Example:
-# cat_amounts_temp = {
-#     "楽天Edy": 3000,
-#     "iD": 2000,
-#     "PayPay": 4000,
-#     "Alipay": 1000
-# }
+# Note:
+#   POS amounts are already grouped by POS categories
+#   If input is blank, assume as 0
+#   rest_count is used to reset Streamlit widget keys
+
+def pos_input(reset_count):
+    pos_amounts ={}
+    
+    for pos_method in POS_METHODS:
+        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=None, step=1, key="pos_" + pos_method + "_" + str(reset_count))
+        if pos_amounts[pos_method] == None:
+            pos_amounts[pos_method] = 0
+    return pos_amounts
+
+
+# Purpose:
+# Create CAT amount input fields
 #
-# This data cannot be directly compared with pos_amounts yet.
-# It must be converted by reconcile_cat_amounts().
+# Input:
+#   rest_count
+#
+# Output:
+#   cat_amount_temp
+#
+# Data shape:
+#   {
+#       "クレジットカード_sales": 3000,
+#       "クレジットカード_cancel": 200,
+#       "iD_sales": 2000, 
+#       "iD_cancel": 0,
+#   }
+#
+# Note:
+#   Sales input always shown
+#   Cancel input only shown when checkbox is checked
+#   If input is blank, assume as 0
+#   rest_count is used to reset Streamlit widget keys
 
 def cat_input(reset_count):
     cat_amounts_temp= {}
@@ -95,30 +96,29 @@ def cat_input(reset_count):
     return cat_amounts_temp
 
 
-# Create POS input fields in the web app.
+# Purpose:
+#   Dispaly comparison results in Streamlit app
+#
+# Input:
+#   comparison_results
 #
 # Output:
-# pos_amounts
+#   None
 #
-# pos_amounts is already grouped by POS categories.
+# Data shape:
+#   [
+#       {
+#           "method": "電子マネー",
+#           "pos_amount": 10000,
+#           "cat_amount": 9790,
+#           "difference": 210,
+#           "mode": "POS_GT_CAT"
+#       }
+#   ]
 #
-# Example:
-# pos_amounts = {
-#     "クレジットカード": 12000,
-#     "交通系IC": 3500,
-#     "電子マネー": 10000,
-#     "国内QR": 7600
-# }
-
-def pos_input(reset_count):
-    pos_amounts ={}
-    
-    for pos_method in POS_METHODS:
-        pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=None, step=1, key="pos_" + pos_method + "_" + str(reset_count))
-        if pos_amounts[pos_method] == None:
-            pos_amounts[pos_method] = 0
-    return pos_amounts
-
+# Note:
+#   MATCH results show shortly as OK
+#   Mismatched result show detail of ecah amount, difference and mode
 
 def show_difference_summary(comparison_results):
     for result in comparison_results:
@@ -136,6 +136,34 @@ def show_difference_summary(comparison_results):
         st.divider()
 
 
+# Purpose:
+#   Display possible combination which reach the target amount
+#
+# Input:
+#   formatted_combinations
+#
+# Output:
+#   None
+#
+# Data shape:
+#   [
+#       {
+#           "combination_number": 1,
+#           "items": [
+#               {
+#                   "item_name": "トリュフ塩パン",
+#                   "price": 318,
+#                   "quantity": 2
+#               }
+#           ],
+#           "total": 636
+#       }
+#   ]
+#
+# Note:
+#   This function only show data
+#   Product grouping is already done by formatted_combinations()
+
 def show_combination_results(formatted_combinations):
     for formatted_combination in formatted_combinations:
         combination_number = formatted_combination["combination_number"]
@@ -148,11 +176,46 @@ def show_combination_results(formatted_combinations):
 
 
 # =========================
-# Correction Helper
-# 差額修正ツール
+# main app flow
 # =========================
 
 if __name__ == "__main__":
+
+    st.title("Bakery POS Reconciler")
+
+    st.write("Version: v1.1.0")
+
+    products, menu_last_update = load_menu()
+    st.write("メニュー更新日:", menu_last_update)
+    st.write("商品数:", len(products))
+    
+
+    if "reset_count" not in st.session_state:
+        st.session_state["reset_count"] = 0
+
+    if st.button("入力をリセット"):
+        st.session_state["reset_count"] += 1
+        st.rerun()
+
+    reset_count = st.session_state["reset_count"]
+
+    with st.expander("使い方・注意事項", expanded=False):
+        st.write("""
+        1. POS金額を入力してください。
+        2. CAT端末の各決済金額を入力してください。
+        3. 差額結果を確認してください。
+        4. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
+        5. POSで取消する取引金額を入力してください。
+        6. 目標金額と商品組み合わせ候補を確認してください。
+
+        注意：
+        - まだテスト版です。
+        - 実際に修正する前に、必ずPOS画面とCAT端末の金額を再確認してください。
+        - 候補が出ない場合は、別の取消金額を試してください。
+        """)
+
+    st.header("差額チェック")
+
     with st.expander("POS金額"):
         pos_amounts = pos_input(reset_count)
     
@@ -171,6 +234,7 @@ if __name__ == "__main__":
 
     if len(mismatch_results) > 0:
         st.divider()
+
         st.subheader("差額修正ツール")
         mismatch_methods = get_mismatch_methods(mismatch_results)
 
