@@ -192,6 +192,8 @@ if __name__ == "__main__":
     st.write("Version:", APP_VERSION)
 
     products, menu_last_update = load_menu()
+    if not products:
+        st.error("メニューの読み込みに失敗しました。data/menu.json を確認してください。")
     st.write("メニュー更新日:", menu_last_update)
     st.write("商品数:", len(products))
 

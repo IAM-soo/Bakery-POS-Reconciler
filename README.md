@@ -48,7 +48,15 @@ pip install -r requirements.txt
 streamlit run web_app.py
 ```
 
-## 5. プロジェクト構成 (Structure)
+## 5. テスト (Tests)
+
+```bash
+pytest test_reconciler.py
+```
+
+コアロジック（`reconciler.py`）に対して 31 件のテストが含まれています。
+
+## 6. プロジェクト構成 (Structure)
 
 ```text
 Bakery-POS-Reconciler/
@@ -59,7 +67,7 @@ Bakery-POS-Reconciler/
     └── menu.json       # Product menu data
 ```
 
-## 6. 現在のステータス (Project Status)
+## 7. 現在のステータス (Project Status)
 
 現在は、手動入力による Streamlit Web アプリ版が動作しています。
 

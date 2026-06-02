@@ -15,6 +15,9 @@ streamlit run web_app.py
 
 # Run the CLI tool
 python reconciler.py
+
+# Run tests
+pytest test_reconciler.py
 ```
 
 ## Collaboration Style

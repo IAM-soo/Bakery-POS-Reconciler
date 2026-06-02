@@ -323,8 +323,22 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
     if target_amount <= 0:
         return []
 
-    # This function searches for product combinations
-    # whose total price is exactly equal to target_amount.
+    # This function solves a variant of the subset-sum problem.
+    #
+    # Subset-sum problem:
+    #   Given a list of numbers, find combinations that add up to a target value.
+    #   In this project, the "numbers" are product prices and the target is the
+    #   correction amount the operator needs to re-enter into the POS system.
+    #
+    # Algorithm: recursive backtracking
+    #   Build a combination one product at a time.
+    #   At each step, try adding each product to the current combination.
+    #   If the running total exceeds target_amount, stop that path and backtrack.
+    #   If the running total equals target_amount, save the combination.
+    #
+    # Why search by item count (1 item, then 2, then 3...)?
+    #   This guarantees shorter combinations are always returned first.
+    #   A 1-item result is simpler to re-enter at the POS than a 5-item result.
     #
     # products:
     #   List of products loaded from menu.json.
