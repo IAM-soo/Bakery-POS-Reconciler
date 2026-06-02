@@ -14,6 +14,8 @@ from reconciler import(
     find_result_by_method
 )
 
+APP_VERSION = "v1.1.0"
+
 # =========================
 # UI helper function
 # =========================
@@ -187,7 +189,7 @@ if __name__ == "__main__":
 
     st.title("Bakery POS Reconciler")
 
-    st.write("Version: v1.1.0")
+    st.write("Version:", APP_VERSION)
 
     products, menu_last_update = load_menu()
     st.write("メニュー更新日:", menu_last_update)
@@ -246,31 +248,34 @@ if __name__ == "__main__":
         selected_method = st.selectbox("修正する項目", mismatch_methods)
         selected_result = find_result_by_method(mismatch_results, selected_method)
 
-        st.write("差額:", selected_result["difference"])
-
-        if selected_result["mode"] == "POS_GT_CAT":
-            st.write("POS側が多いです。")
-            st.write("POSの注文履歴から取消する取引を1つ選び、その金額を入力してください。")
-        elif selected_result["mode"] == "CAT_GT_POS":
-            st.write("CAT側が多いです。")
-            st.write("POS側に差額分を追加できる可能性があります。")
-            st.write("合う候補がない場合は、POSで取消する取引金額を入力してください。")
-
-        cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
-
-        target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
-
-        if target_amount is not None and target_amount > 0:
-            st.write("目標金額", target_amount)
-            st.divider()
-            combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
-            if len(combinations) > 0:
-                formatted_combinations = format_combinations(combinations)
-                show_combination_results(formatted_combinations)
-            else:
-                st.write("候補なし")
+        if selected_result is None:
+            st.error("選択した項目が見つかりませんでした。")
         else:
-            st.write("取消金額が差額より小さいため修正できません")
+            st.write("差額:", selected_result["difference"])
+
+            if selected_result["mode"] == "POS_GT_CAT":
+                st.write("POS側が多いです。")
+                st.write("POSの注文履歴から取消する取引を1つ選び、その金額を入力してください。")
+            elif selected_result["mode"] == "CAT_GT_POS":
+                st.write("CAT側が多いです。")
+                st.write("POS側に差額分を追加できる可能性があります。")
+                st.write("合う候補がない場合は、POSで取消する取引金額を入力してください。")
+
+            cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
+
+            target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
+
+            if target_amount is not None and target_amount > 0:
+                st.write("目標金額", target_amount)
+                st.divider()
+                combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
+                if len(combinations) > 0:
+                    formatted_combinations = format_combinations(combinations)
+                    show_combination_results(formatted_combinations)
+                else:
+                    st.write("候補なし")
+            else:
+                st.write("取消金額が差額より小さいため修正できません")
     
     
 

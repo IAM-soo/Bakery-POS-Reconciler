@@ -127,9 +127,6 @@ PAYMENT_GROUPS = {
 # Web app can reuse these functions
 # =========================
 
-def calculate_payment_total(payment_amounts):
-    return sum(payment_amounts.values())
-
 
 # Purpose:
 #   Calculate the net total for selected CAT payment methods.
