@@ -83,7 +83,7 @@ def cat_input(reset_count):
             if cat_amounts_temp[cat_method + "_sales"] == None:
                 cat_amounts_temp[cat_method + "_sales"] = 0
             
-            cat_method_cancel = st.checkbox(cat_method + "  取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
+            cat_method_cancel = st.checkbox("取消あり", key="cat_" + cat_method + "_cancel" + "_key_" + str(reset_count))
             if cat_method_cancel:
                 cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_" + cat_method + "_cancel" + "_" + str(reset_count))
                 if cat_amounts_temp[cat_method + "_cancel"] == None:
@@ -203,11 +203,13 @@ if __name__ == "__main__":
         st.write("""
         1. POS金額を入力してください。
         2. CAT端末の各決済金額を入力してください。
-        3. 差額結果を確認してください。
-        4. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
-        5. POSで取消する取引金額を入力してください。
-        6. 目標金額と商品組み合わせ候補を確認してください。
-
+        3. CAT端末の取消ありの場合、取消あり」にチェックを入れて、取消金額を入力してください。
+        4. 差額結果を確認してください。
+        5. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
+        6. POSで取消希望の取引金額を入力してください。
+        7. CAT端末が多い場合は、POS側で差額分を追加できる可能性があります。
+        8. 目標金額と商品組み合わせ候補を確認してください。
+                 
         注意：
         - まだテスト版です。
         - 実際に修正する前に、必ずPOS画面とCAT端末の金額を再確認してください。
