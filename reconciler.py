@@ -505,6 +505,16 @@ def format_combinations(combinations):
 
         # Store the total price of this combination.
         total = 0
+
+        # item_counts is used to group the same products together.
+        #
+        # Example:
+        # Instead of storing:
+        # - salt bread
+        # - salt bread
+        #
+        # It stores:
+        # - salt bread 318 x 2
         item_counts = {}
         for product in combination:
             product_id = product["id"]
@@ -573,89 +583,27 @@ def find_result_by_method(mismatch_results, selected_method):
 
         
 def print_combinations(combinations):
-    # Print each valid combination.
-    #
-    # enumerate(combinations, start=1) gives:
-    # combination_number = 1, combination = first combination
-    # combination_number = 2, combination = second combination
-    # ...
-    for combination_number, combination in enumerate(combinations, start=1):
+    # Reuse format_combinations() for grouping and total calculation.
+    # See format_combinations() for how item_counts grouping works.
+    formatted = format_combinations(combinations)
+
+    # Print each combination.
+    # enumerate gives combination_number = 1, 2, 3...
+    for fc in formatted:
         print()
-        print("組合", combination_number)
+        print("組合", fc["combination_number"])
 
-        # Store the total price of this combination.
-        total = 0
-
-        # item_counts is used to group the same products together.
-        #
-        # Example:
-        # Instead of printing:
-        # - salt bread
-        # - salt bread
-        #
-        # It can print:
-        # - salt bread 318 x 2
-        item_counts = {}
-
-        # Check each product in this combination.
-        for product in combination:
-            product_id = product["id"]
-
-            # Add this product price to the total.
-            total += product["price"]
-
-            # If this product id appears for the first time,
-            # create a new record in item_counts.
-            if product_id not in item_counts:
-                item_counts[product_id] = {
-                    "item_name": product["item_name"],
-                    "price": product["price"],
-                    "quantity": 0
-                }
-
-            # Increase the quantity of this product by 1.
-            item_counts[product_id]["quantity"] += 1
-
-        # Print grouped product information.
-        #
-        # item_counts.values() gives only the stored product information,
-        # not the product ids.
-        for item in item_counts.values():
+        # fc["items"] is already grouped by product with quantity.
+        for item in fc["items"]:
             print("-", item["item_name"], item["price"], "x", item["quantity"])
 
-        # Print the total price of this combination.
-        print("総額:", total)
+        print("総額:", fc["total"])
 
 
 # =========================
 # CLI input helpers
 # Terminal only
 # =========================
-
-def cat_emoney_input():
-    cat_emoney = {}
-    for emoney_name in CAT_EMONEY_METHODS:
-        cat_emoney[emoney_name] = input_int(emoney_name + "の金額を入力してください＞")
-
-    cat_emoney_total = calculate_payment_total(cat_emoney)
-    return cat_emoney, cat_emoney_total
-    
-def cat_jpqr_input():
-    cat_jpqr = {}
-    for jpqr_name in CAT_JPQR_METHODS:
-        cat_jpqr[jpqr_name] = input_int(jpqr_name + "の金額を入力してください＞")
-
-    cat_jpqr_total = calculate_payment_total(cat_jpqr)
-    return cat_jpqr, cat_jpqr_total
-
-def cat_chqr_input():
-    cat_chqr = {}
-    for chqr_name in CAT_CHQR_METHODS:
-        cat_chqr[chqr_name] = input_int(chqr_name + "の金額を入力してください＞")
-
-    cat_chqr_total = calculate_payment_total(cat_chqr)
-    return cat_chqr, cat_chqr_total
-
 
 #Force user to input in number
 def input_int(message):
