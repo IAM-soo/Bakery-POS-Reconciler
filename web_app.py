@@ -188,16 +188,6 @@ if __name__ == "__main__":
     products, menu_last_update = load_menu()
     st.write("メニュー更新日:", menu_last_update)
     st.write("商品数:", len(products))
-    
-
-    if "reset_count" not in st.session_state:
-        st.session_state["reset_count"] = 0
-
-    if st.button("入力をリセット"):
-        st.session_state["reset_count"] += 1
-        st.rerun()
-
-    reset_count = st.session_state["reset_count"]
 
     with st.expander("使い方・注意事項", expanded=False):
         st.write("""
@@ -215,6 +205,15 @@ if __name__ == "__main__":
         - 実際に修正する前に、必ずPOS画面とCAT端末の金額を再確認してください。
         - 候補が出ない場合は、別の取消金額を試してください。
         """)
+
+    if "reset_count" not in st.session_state:
+        st.session_state["reset_count"] = 0
+
+    if st.button("入力をリセット"):
+        st.session_state["reset_count"] += 1
+        st.rerun()
+
+    reset_count = st.session_state["reset_count"]
 
     st.header("差額チェック")
 
