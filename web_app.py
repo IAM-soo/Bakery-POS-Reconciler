@@ -175,6 +175,8 @@ def show_combination_results(formatted_combinations):
             st.write("-", item["item_name"], item["price"], "x", item["quantity"])
         
         st.write("総額:", formatted_combination["total"])
+        st.divider()
+        
 
 
 # =========================
@@ -258,12 +260,11 @@ if __name__ == "__main__":
 
         target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
 
-        st.divider()
-
         if target_amount <= 0:
             st.write("取消金額が差額より小さいため修正できません")
         else:
             st.write("目標金額", target_amount)
+            st.divider()
             combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
             if len(combinations) > 0:
                 formatted_combinations = format_combinations(combinations)
