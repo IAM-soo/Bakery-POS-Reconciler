@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-05-27",
+    "last_updated": "2026-06-04",
     "shop_name": "JR東京駅八重洲北口店",
     "item":[
         {
@@ -21,14 +21,14 @@
             "item_name": "チョコガナシュ塩パン",
             "price": "380",
             "category": "塩パン",
-            "is_active": true
+            "is_active": false
         },
         {
             "id": "S004",
             "item_name": "抹茶ガナシュ塩パン",
             "price": "380",
             "category": "塩パン",
-            "is_active": false
+            "is_active": true
         },
         {
             "id": "S005",
@@ -182,7 +182,7 @@
             "item_name": "ほうれん草味噌カレーパン",
             "price": "420",
             "category": "蔬菜パン",
-            "is_active": true
+            "is_active": false
         },
         {
             "id": "K001",
