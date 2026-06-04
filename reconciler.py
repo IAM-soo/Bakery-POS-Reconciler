@@ -75,7 +75,7 @@ def load_menu():
 POS_METHODS = [
     "クレジットカード",
     "交通系IC",
-    "金券",
+    "JRE ポイント",
     "国内QR",
     "中国QR",
     "電子マネー",
@@ -119,7 +119,7 @@ PAYMENT_GROUPS = {
     "電子マネー": CAT_EMONEY_METHODS,
     "中国QR": CAT_CHQR_METHODS,
     "国内QR": CAT_JPQR_METHODS,
-    "金券": ["金券"],
+    "JRE ポイント": ["JRE ポイント"],
 }
 
 # =========================
