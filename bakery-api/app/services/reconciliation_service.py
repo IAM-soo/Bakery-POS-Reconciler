@@ -3,7 +3,7 @@ from app.constants.payment_methods import PAYMENT_GROUPS, POS_METHODS
 def calculate_selected_payment_total(payment_amounts, selected_methods):
     total = 0
     for method in selected_methods:
-        total += payment_amounts.get(method + "_sales", 0) - payment_amounts.get(method + "_cancel", 0) 
+        total += payment_amounts.get(method + "_sales", 0) - payment_amounts.get(method + "_cancel", 0)
     return total
 
 
@@ -38,7 +38,7 @@ def compare_payment_amounts(pos_amounts, cat_amounts):
         cat_amount = cat_amounts.get(method, 0)
         difference, mode = calculate_difference(pos_amount, cat_amount)
 
-        result = {"method":method, "pos_amount":pos_amount, "cat_amount":cat_amount, "difference":difference, "mode":mode}
+        result = {"method": method, "pos_amount": pos_amount, "cat_amount": cat_amount, "difference": difference, "mode": mode}
 
         comparison_results.append(result)
 
@@ -51,7 +51,6 @@ def filter_mismatches(comparison_results):
     for result in comparison_results:
         if result["mode"] != "MATCH":
             mismatch_result.append(result)
-    
     return mismatch_result
 
 
@@ -69,13 +68,6 @@ def calculate_target_amount(cancelled_amount, difference, mode):
     #   CAT_GT_POS means CAT amount is greater than POS amount.
 
     if mode == "POS_GT_CAT":
-        # If POS is greater than CAT,
-        # the corrected POS amount should be smaller.
-        #
-        # Example:
-        # cancelled_amount = 1400
-        # difference = 210
-        # target_amount = 1400 - 210 = 1190
         target_amount = cancelled_amount - difference
         return target_amount
 
@@ -100,9 +92,6 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
         return []
 
     # This function solves a variant of the subset-sum problem.
-    #
-    # Subset-sum problem:
-    #   Given a list of numbers, find combinations that add up to a target value.
     #   In this project, the "numbers" are product prices and the target is the
     #   correction amount the operator needs to re-enter into the POS system.
     #
@@ -112,21 +101,11 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
     #   If the running total exceeds target_amount, stop that path and backtrack.
     #   If the running total equals target_amount, save the combination.
     #
-    # Why search by item count (1 item, then 2, then 3...)?
-    #   This guarantees shorter combinations are always returned first.
-    #   A 1-item result is simpler to re-enter at the POS than a 5-item result.
+    # Items are tried in increasing count (1, then 2, then 3...) so that
+    # simpler corrections — fewer items to re-enter at the POS — come first.
     #
     # products:
     #   List of products loaded from menu.json.
-    #
-    # target_amount:
-    #   The amount we want to match.
-    #
-    # max_items:
-    #   Maximum number of products allowed in one combination.
-    #
-    # max_results:
-    #   Maximum number of combinations to save.
 
     # This list stores all valid combinations found by the search.
     results = []
@@ -134,17 +113,6 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
     def search(start_index, remaining_amount, current_combination, item_limit):
         # This is a recursive helper function.
         # It tries to build one combination step by step.
-        #
-        # start_index:
-        #   The index in products where this search starts.
-        #   This prevents duplicated order patterns like A+B and B+A.
-        #
-        # remaining_amount:
-        #   The amount that still needs to be matched.
-        #   Example:
-        #   target_amount = 1190
-        #   choose 318 yen product
-        #   remaining_amount becomes 1190 - 318 = 872
         #
         # current_combination:
         #   The products already selected in the current search path.
@@ -158,10 +126,7 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
         if len(results) >= max_results:
             return
 
-        # If remaining_amount becomes 0,
-        # the selected products match the target amount.
         if remaining_amount == 0:
-
             # Only accept this combination if the number of selected products
             # is exactly equal to item_limit.
             if len(current_combination) == item_limit:
@@ -170,24 +135,9 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
             # Stop this search path because the amount already matched.
             return
 
-        # If remaining_amount is negative,
-        # the selected products are too expensive.
-        # Example:
-        # target = 1190
-        # selected total = 1300
-        # remaining_amount = -110
         if remaining_amount < 0:
             return
 
-        # If the current combination already has item_limit products,
-        # but remaining_amount is not 0,
-        # this path failed.
-        #
-        # Example:
-        # item_limit = 3
-        # current_combination already has 3 products
-        # remaining_amount is still 200
-        # We cannot add a 4th product, so stop.
         if len(current_combination) >= item_limit:
             return
 
@@ -195,8 +145,10 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
         #
         # range(start_index, len(products)) creates indexes like:
         # start_index, start_index + 1, start_index + 2, ...
+        # range(start_index, ...) — not range(0, ...) — so once we move past
+        # a product we never reconsider it from an earlier position,
+        # avoiding duplicates like [salt bread, croissant] vs [croissant, salt bread].
         for i in range(start_index, len(products)):
-
             # Get one product from the products list by index.
             product = products[i]
 
@@ -204,43 +156,14 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
             #
             # This does not directly change current_combination.
             # It creates a new list instead.
-            #
-            # Example:
-            # current_combination = [A, B]
-            # product = C
-            # new_combination = [A, B, C]
             new_combination = current_combination + [product]
-
             # Continue searching after choosing this product.
             #
-            # i:
-            #   Start from the same index again.
-            #   This allows the same product to be selected multiple times.
+            # i (not i + 1): allows picking the same product again,
             #   Example: salt bread x 2
-            #
-            # remaining_amount - product["price"]:
-            #   Subtract the selected product price from the remaining amount.
-            #
-            # new_combination:
-            #   Pass the updated product combination to the next search.
-            #
-            # item_limit:
-            #   Keep the same item count limit in this round.
             search(i, remaining_amount - product["price"], new_combination, item_limit)
 
-    # Try combinations with 1 item, then 2 items, then 3 items...
-    #
-    # If max_items = 8:
-    # range(1, max_items + 1) becomes range(1, 9)
-    # The actual item_limit values are:
-    # 1, 2, 3, 4, 5, 6, 7, 8
     for item_limit in range(1, max_items + 1):
-
-        # Start searching with:
-        # start_index = 0          -> start from the first product
-        # remaining_amount = target_amount
-        # current_combination = [] -> no product selected yet
-        # item_limit = current item limit, such as 1, 2, 3...
         search(0, target_amount, [], item_limit)
 
         # If enough results are found, stop trying larger item counts.
@@ -252,34 +175,20 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
 
 
 def format_combinations(combinations):
-    # enumerate(combinations, start=1) gives:
-    # combination_number = 1, combination = first combination
-    # combination_number = 2, combination = second combination
     formatted_combinations = []
 
     for combination_number, combination in enumerate(combinations, start=1):
-
-        # Store the total price of this combination.
         total = 0
 
         # item_counts is used to group the same products together.
-        #
-        # Example:
-        # Instead of storing:
-        # - salt bread
-        # - salt bread
-        #
         # It stores:
         # - salt bread 318 x 2
         item_counts = {}
         for product in combination:
             product_id = product["id"]
 
-            # Add this product price to the total.
             total += product["price"]
 
-            # If this product id appears for the first time,
-            # create a new record in item_counts.
             if product_id not in item_counts:
                 item_counts[product_id] = {
                     "item_name": product["item_name"],
@@ -287,10 +196,8 @@ def format_combinations(combinations):
                     "quantity": 0
                 }
 
-            # Increase the quantity of this product by 1.
             item_counts[product_id]["quantity"] += 1
 
-        formatted_combination = {"combination_number":combination_number, "items":list(item_counts.values()), "total":total}
+        formatted_combination = {"combination_number": combination_number, "items": list(item_counts.values()), "total": total}
         formatted_combinations.append(formatted_combination)
-    
     return formatted_combinations
