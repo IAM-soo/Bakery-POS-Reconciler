@@ -70,7 +70,7 @@
             "item_name": "チーズデニッシュ",
             "price": "298",
             "category": "デニッシュ",
-            "is_active": false
+            "is_active": true
         },
         {
             "id": "D006",
