@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.config import settings
 from app.database import Base, engine
@@ -26,7 +29,9 @@ app.add_middleware(
 app.include_router(products.router)
 app.include_router(reconciliation.router)
 
+frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
+app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
-@app.get("/", tags=["Health"])
-def health_check():
-    return {"status": "ok", "app": settings.app_name}
+@app.get("/", include_in_schema=False)
+def frontend():
+    return FileResponse(os.path.join(frontend_path, "index.html"))

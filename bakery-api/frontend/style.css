@@ -1,0 +1,16 @@
+.hidden {
+  display: none;
+}
+
+body {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.status-ok {
+  color: green;
+}
+
+.status-mismatch {
+  color: red;
+}
