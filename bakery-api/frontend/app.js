@@ -35,11 +35,22 @@ function buildPosInputs() {
   }
 }
 
+function toggleCancelInput(method) {
+  const row = document.getElementById(`cat_${method}_cancel_row`);
+   row.classList.toggle("hidden")
+}
 function buildCatInputs() {
     const section = document.getElementById("cat_section");
     for (const [group, methods] of Object.entries(PAYMENT_GROUPS)) {
         for (const method of methods) {
-            section.innerHTML += `<label>${method} 売上</label><input type="number" id="cat_${method}_sales"><br>`;
+            section.innerHTML += 
+            `<label>${method} 売上</label><br>
+             <input type="number" id="cat_${method}_sales"><br>
+             <input type="checkbox" onchange="toggleCancelInput('${method}')"> 取消あり<br>
+             <div id="cat_${method}_cancel_row" class="hidden">
+                <label>${method} 取消</label>
+                <input type="number" id="cat_${method}_cancel">
+              </div><br>`;
         }
     }
 }
