@@ -14,7 +14,7 @@ from reconciler import(
     find_result_by_method
 )
 
-APP_VERSION = "v1.1.0"
+APP_VERSION = "v1.2.0"
 
 # =========================
 # UI helper function
@@ -98,6 +98,72 @@ def cat_input(reset_count):
         st.divider()
 
     return cat_amounts_temp
+
+
+# Purpose:
+# Create POS and CAT amount input fields, grouped by payment method
+#
+# Input:
+#   reset_count
+#
+# Output:
+#   pos_amounts, cat_amounts_temp
+#
+# Data shape:
+#   pos_amounts = {
+#       "クレジットカード": 12000,
+#       "電子マネー": 10000,
+#       "国内QR": 7600
+#   }
+#
+#   cat_amounts_temp = {
+#       "楽天Edy_sales": 3000,
+#       "楽天Edy_cancel": 200,
+#       "iD_sales": 2000,
+#       "iD_cancel": 0,
+#   }
+#
+# Note:
+#   One tab per POS_METHODS category (e.g. 電子マネー)
+#   Each tab shows the POS input for that category,
+#   followed by the CAT sales/cancel inputs for its CAT methods (PAYMENT_GROUPS)
+#   Sales input always shown
+#   Cancel input only shown when checkbox is checked
+#   If input is blank, assume as 0
+#   Uses separate widget keys from pos_input()/cat_input() so both
+#   input modes can coexist without key collisions
+#   reset_count is used to reset Streamlit widget keys
+
+def payment_method_input(reset_count):
+    pos_amounts = {}
+    cat_amounts_temp = {}
+
+    tabs = st.tabs(POS_METHODS)
+
+    for tab, pos_method in zip(tabs, POS_METHODS):
+        with tab:
+            pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=None, step=1, key="pos_tab_" + pos_method + "_" + str(reset_count))
+            if pos_amounts[pos_method] == None:
+                pos_amounts[pos_method] = 0
+
+            st.divider()
+
+            for cat_method in PAYMENT_GROUPS[pos_method]:
+                cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method + " 売上", min_value=0, value=None, step=1, key="cat_tab_" + cat_method + "_" + str(reset_count))
+                if cat_amounts_temp[cat_method + "_sales"] == None:
+                    cat_amounts_temp[cat_method + "_sales"] = 0
+
+                cat_method_cancel = st.checkbox("取消あり", key="cat_tab_" + cat_method + "_cancel_key_" + str(reset_count))
+                if cat_method_cancel:
+                    cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_tab_" + cat_method + "_cancel_" + str(reset_count))
+                    if cat_amounts_temp[cat_method + "_cancel"] == None:
+                        cat_amounts_temp[cat_method + "_cancel"] = 0
+                    elif cat_amounts_temp[cat_method + "_cancel"] > cat_amounts_temp[cat_method + "_sales"]:
+                        st.warning("取消金額が売上金額より大きいです。入力内容を確認してください。")
+                else:
+                    cat_amounts_temp[cat_method + "_cancel"] = 0
+
+    return pos_amounts, cat_amounts_temp
 
 
 # Purpose:
@@ -225,12 +291,17 @@ if __name__ == "__main__":
 
     st.header("差額チェック")
 
-    with st.expander("POS金額"):
-        pos_amounts = pos_input(reset_count)
-    
-    with st.expander("CAT金額"):
-        cat_amounts_temp = cat_input(reset_count)
-    
+    input_mode = st.radio("入力方式", ["POS / CAT別", "決済方法別"], horizontal=True)
+
+    if input_mode == "POS / CAT別":
+        with st.expander("POS金額"):
+            pos_amounts = pos_input(reset_count)
+
+        with st.expander("CAT金額"):
+            cat_amounts_temp = cat_input(reset_count)
+    else:
+        pos_amounts, cat_amounts_temp = payment_method_input(reset_count)
+
     st.divider()
 
     cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
