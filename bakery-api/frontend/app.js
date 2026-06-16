@@ -46,7 +46,7 @@ function buildCatInputs() {
     for (const method of methods) {
       section.innerHTML += `<label>${method} 売上</label><br>
           <input type="number" id="cat_${method}_sales"><br>
-          <input type="checkbox" onchange="toggleCancelInput('${method}')"> 取消あり<br>
+          <input type="checkbox" id="cat_${method}_checkbox" onchange="toggleCancelInput('${method}')"> 取消あり<br>
           <div id="cat_${method}_cancel_row" class="hidden">
             <label>${method} 取消</label>
             <input type="number" id="cat_${method}_cancel">
@@ -94,6 +94,24 @@ async function handleReconcile() {
   console.log(result);
   showReconcileResults(result);
 }
+
+function handleReset(){
+  for (const pos_method of POS_METHODS) {
+    document.getElementById(`pos_${pos_method}`).value = "";
+  }
+  for (const [group, cat_methods] of Object.entries(PAYMENT_GROUPS)) {
+    for (const cat_method of cat_methods) {
+      document.getElementById(`cat_${cat_method}_sales`).value = "";
+      document.getElementById(`cat_${cat_method}_cancel`).value = "";
+      document.getElementById(`cat_${cat_method}_checkbox`).checked = false;
+
+      document.getElementById(`cat_${cat_method}_cancel_row`).classList.add("hidden");
+      
+    }
+  }
+  document.getElementById("result_section").classList.add("hidden");
+}
+
 
 function showReconcileResults(result) {
   const resultList = document.getElementById("result_list");
