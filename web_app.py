@@ -288,7 +288,7 @@ if __name__ == "__main__":
 
     input_mode = st.radio("入力方式", ["詳細入力（CAT内訳あり）", "簡易入力（決済方法ごと）"], horizontal=True)
 
-    if input_mode == "POS / CAT別":
+    if input_mode == "詳細入力（CAT内訳あり）":
         with st.expander("POS金額"):
             pos_amounts = pos_input(reset_count)
 
