@@ -14,7 +14,7 @@ from reconciler import(
     find_result_by_method
 )
 
-APP_VERSION = "v1.2.0"
+APP_VERSION = "v1.3.0"
 
 # =========================
 # UI helper function
@@ -136,34 +136,25 @@ def cat_input(reset_count):
 
 def payment_method_input(reset_count):
     pos_amounts = {}
-    cat_amounts_temp = {}
+    cat_amounts = {}
 
     tabs = st.tabs(POS_METHODS)
 
-    for tab, pos_method in zip(tabs, POS_METHODS):
+    for tab, method in zip(tabs, POS_METHODS):
         with tab:
-            pos_amounts[pos_method] = st.number_input(pos_method, min_value=0, value=None, step=1, key="pos_tab_" + pos_method + "_" + str(reset_count))
-            if pos_amounts[pos_method] == None:
-                pos_amounts[pos_method] = 0
+            st.write("POS側")
+            pos_amounts[method] = st.number_input(method, min_value=0, value=None, step=1, key="pos_tab_" + method + "_" + str(reset_count))
+            if pos_amounts[method] == None:
+                pos_amounts[method] = 0
 
             st.divider()
+            
+            st.write("CAT側")
+            cat_amounts[method] = st.number_input(method, min_value=0, value=None, step=1, key="cat_tab_" + method + "_" + str(reset_count))
+            if cat_amounts[method] == None:
+                cat_amounts[method] = 0
 
-            for cat_method in PAYMENT_GROUPS[pos_method]:
-                cat_amounts_temp[cat_method + "_sales"] = st.number_input(cat_method + " 売上", min_value=0, value=None, step=1, key="cat_tab_" + cat_method + "_" + str(reset_count))
-                if cat_amounts_temp[cat_method + "_sales"] == None:
-                    cat_amounts_temp[cat_method + "_sales"] = 0
-
-                cat_method_cancel = st.checkbox("取消あり", key="cat_tab_" + cat_method + "_cancel_key_" + str(reset_count))
-                if cat_method_cancel:
-                    cat_amounts_temp[cat_method + "_cancel"] = st.number_input(cat_method + " 取消", min_value=0, value=None, step=1, key="cat_tab_" + cat_method + "_cancel_" + str(reset_count))
-                    if cat_amounts_temp[cat_method + "_cancel"] == None:
-                        cat_amounts_temp[cat_method + "_cancel"] = 0
-                    elif cat_amounts_temp[cat_method + "_cancel"] > cat_amounts_temp[cat_method + "_sales"]:
-                        st.warning("取消金額が売上金額より大きいです。入力内容を確認してください。")
-                else:
-                    cat_amounts_temp[cat_method + "_cancel"] = 0
-
-    return pos_amounts, cat_amounts_temp
+    return pos_amounts, cat_amounts
 
 
 # Purpose:
@@ -265,14 +256,18 @@ if __name__ == "__main__":
 
     with st.expander("使い方・注意事項", expanded=False):
         st.write("""
-        1. POS金額を入力してください。
-        2. CAT端末の各決済金額を入力してください。
-        3. CAT端末の取消ありの場合、取消あり」にチェックを入れて、取消金額を入力してください。
-        4. 差額結果を確認してください。
-        5. 差額がある場合は、差額修正ツールで修正する項目を選択してください。
-        6. POSで取消希望の取引金額を入力してください。
-        7. CAT端末が多い場合は、POS側で差額分を追加できる可能性があります。
-        8. 目標金額と商品組み合わせ候補を確認してください。
+
+        1. 入力方法を選択してください。
+        2. POS金額を入力してください。
+        3. CAT端末の各決済金額を入力してください。
+        4. CAT端末で取消がある場合は、「取消あり」にチェックを入れて、取消金額を入力してください。
+        5. 差額結果を確認してください。
+        6. 差額がある場合は、差額修正ツールで差額が出ている決済方法を選択してください。
+        7. POSの注文履歴から、取消したい取引の金額を入力してください。
+        8. CAT側が多い場合は、POS側に差額分を追加する候補を確認できます。
+        9. 候補内容を確認し、問題なければ対象の注文履歴を印刷してください。
+        10. 対象の注文を取消し、候補通りに新しい注文を作成してください。
+        
                  
         注意：
         - まだテスト版です。
@@ -291,7 +286,7 @@ if __name__ == "__main__":
 
     st.header("差額チェック")
 
-    input_mode = st.radio("入力方式", ["POS / CAT別", "決済方法別"], horizontal=True)
+    input_mode = st.radio("入力方式", ["詳細入力（CAT内訳あり）", "簡易入力（決済方法ごと）"], horizontal=True)
 
     if input_mode == "POS / CAT別":
         with st.expander("POS金額"):
@@ -299,12 +294,14 @@ if __name__ == "__main__":
 
         with st.expander("CAT金額"):
             cat_amounts_temp = cat_input(reset_count)
+        
+        cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
     else:
-        pos_amounts, cat_amounts_temp = payment_method_input(reset_count)
+        pos_amounts, cat_amounts = payment_method_input(reset_count)
 
     st.divider()
 
-    cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
+    
     comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
     
     st.subheader("差額結果")
@@ -316,9 +313,12 @@ if __name__ == "__main__":
         st.divider()
 
         st.subheader("差額修正ツール")
+        st.write("差額が出ている決済方法を選択してください。")
+        st.write("POSの注文履歴から取消したい取引金額を入力すると、修正に使える商品組み合わせ候補を表示します。")
+        st.write("候補が表示されたら、金額を確認して、問題なければ印刷してください。")
         mismatch_methods = get_mismatch_methods(mismatch_results)
 
-        selected_method = st.selectbox("修正する項目", mismatch_methods)
+        selected_method = st.selectbox("差額が出ている決済方法", mismatch_methods)
         selected_result = find_result_by_method(mismatch_results, selected_method)
 
         if selected_result is None:
@@ -328,18 +328,18 @@ if __name__ == "__main__":
 
             if selected_result["mode"] == "POS_GT_CAT":
                 st.write("POS側が多いです。")
-                st.write("POSの注文履歴から取消する取引を1つ選び、その金額を入力してください。")
+                st.write("POSの注文履歴から取消したい取引を1つ選び、その金額を入力してください。")
             elif selected_result["mode"] == "CAT_GT_POS":
                 st.write("CAT側が多いです。")
                 st.write("POS側に差額分を追加できる可能性があります。")
-                st.write("合う候補がない場合は、POSで取消する取引金額を入力してください。")
+                st.write("合う候補がない場合は、POSで取消したい取引金額を入力してください。")
 
-            cancelled_amount = st.number_input("取消金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
+            cancelled_amount = st.number_input("POSで一度取消したい取引の金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
 
             target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
 
             if target_amount is not None and target_amount > 0:
-                st.write("目標金額", target_amount)
+                st.write("新しい注文金額", target_amount)
                 st.divider()
                 combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
                 if len(combinations) > 0:
@@ -348,7 +348,7 @@ if __name__ == "__main__":
                 else:
                     st.write("候補なし")
             else:
-                st.write("取消金額が差額より小さいため修正できません")
+                st.write("取消金額が差額より小さいため、この金額では修正できません。")
     
     
 
