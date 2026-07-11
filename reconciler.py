@@ -3,19 +3,26 @@ import os
 
 
 # =========================
+# Module variable
+# =========================
+
+# __file__ means the path of this Python file.
+# os.path.dirname(__file__) gets the folder that contains this file.
+BASE_PATH = os.path.dirname(__file__)
+RECORD_PATH = os.path.join(BASE_PATH, "data", "record.json")
+
+
+# =========================
 # Data loading
 # =========================
 
 def load_menu():
-    # __file__ means the path of this Python file.
-    # os.path.dirname(__file__) gets the folder that contains this file.
-    base_path = os.path.dirname(__file__)
 
     # Create the path to data/menu.json.
     # Example:
     # base_path = ".../Bakery-POS-Reconciler"
     # menu_path = ".../Bakery-POS-Reconciler/data/menu.json"
-    menu_path = os.path.join(base_path, "data", "menu.json")
+    menu_path = os.path.join(BASE_PATH, "data", "menu.json")
 
     try:
         # Open menu.json in read-only mode.
@@ -57,6 +64,32 @@ def load_menu():
         print("メニューの価格データが正しくありません")
         return [], "不明"
 
+
+def save_usage_record(time_stamp, summary):
+
+    saved_record = load_usage_records()
+
+    new_record = {"time_stamp": time_stamp, "summary": summary}
+
+    saved_record.insert(0, new_record)
+
+    with open(RECORD_PATH, "w", encoding="utf-8") as f:
+        json.dump(saved_record, f, ensure_ascii=False, indent=2)
+
+
+def load_usage_records():
+
+    try:
+        with open(RECORD_PATH, "r", encoding="utf-8") as f:
+            saved_record = json.load(f)
+        
+    except FileNotFoundError:
+        saved_record = []
+    
+    except json.JSONDecodeError:
+        saved_record = []
+
+    return saved_record
 
 # =========================
 # Payment method definitions
@@ -478,6 +511,31 @@ def find_combinations(products, target_amount, max_items=8, max_results=3):
 # =========================
 # Output formatting
 # =========================
+
+# {
+#     "time_stamp": "...",
+#     "summary": {
+#         "クレジットカード": {"差額": 23, "mode": "POS_GT_CAT"},
+#         "交通系IC": "OK!",
+#         "JRE ポイント": "OK!",
+#         "国内QR": "OK!",
+#         "中国QR": "OK!",
+#         "電子マネー": "OK!"
+#     }
+# }
+
+def summarize_comparison_results(comparison_results):
+    
+    summary = {}
+
+    for result in comparison_results:
+        if result["mode"] == "MATCH":
+            summary[result["method"]] = "OK!"
+        else:
+            summary[result["method"]] = {"差額":result["difference"], "mode":result["mode"]}
+
+    return summary
+
 
 # Convert raw product combinations into display-friendly data.
 #

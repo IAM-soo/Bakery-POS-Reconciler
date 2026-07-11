@@ -1,9 +1,13 @@
 import streamlit as st
+import time as time
 
 from reconciler import(
     load_menu,
+    save_usage_record,
+    load_usage_records,
     POS_METHODS,
     PAYMENT_GROUPS,
+    summarize_comparison_results,
     reconcile_cat_amounts,
     compare_payment_amounts,
     filter_mismatches,
@@ -296,59 +300,90 @@ if __name__ == "__main__":
             cat_amounts_temp = cat_input(reset_count)
         
         cat_amounts = reconcile_cat_amounts(cat_amounts_temp)
+
     else:
         pos_amounts, cat_amounts = payment_method_input(reset_count)
 
+    if st.button("チェック"):
+
+        comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
+        
+        st.subheader("差額結果")
+
+        show_difference_summary(comparison_results)
+        
+        mismatch_results = filter_mismatches(comparison_results)
+
+        time_stamp = time.strftime("%m/%d %H:%M")
+
+        summary = summarize_comparison_results(comparison_results)
+
+        save_usage_record(time_stamp, summary)
+
+        if len(mismatch_results) > 0:
+            st.divider()
+
+            st.subheader("差額修正ツール")
+            st.write("差額が出ている決済方法を選択してください。")
+            st.write("POSの注文履歴から取消したい取引金額を入力すると、修正に使える商品組み合わせ候補を表示します。")
+            st.write("候補が表示されたら、金額を確認して、問題なければ印刷してください。")
+            mismatch_methods = get_mismatch_methods(mismatch_results)
+
+            selected_method = st.selectbox("差額が出ている決済方法", mismatch_methods)
+            selected_result = find_result_by_method(mismatch_results, selected_method)
+
+            if selected_result is None:
+                st.error("選択した項目が見つかりませんでした。")
+            else:
+                st.write("差額:", selected_result["difference"])
+
+                if selected_result["mode"] == "POS_GT_CAT":
+                    st.write("POS側が多いです。")
+                    st.write("POSの注文履歴から取消したい取引を1つ選び、その金額を入力してください。")
+                elif selected_result["mode"] == "CAT_GT_POS":
+                    st.write("CAT側が多いです。")
+                    st.write("POS側に差額分を追加できる可能性があります。")
+                    st.write("合う候補がない場合は、POSで取消したい取引金額を入力してください。")
+
+                cancelled_amount = st.number_input("POSで一度取消したい取引の金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
+
+                target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
+
+                if target_amount is not None and target_amount > 0:
+                    st.write("新しい注文金額", target_amount)
+                    st.divider()
+                    combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
+                    if len(combinations) > 0:
+                        formatted_combinations = format_combinations(combinations)
+                        show_combination_results(formatted_combinations)
+                    else:
+                        st.write("候補なし")
+                else:
+                    st.write("取消金額が差額より小さいため、この金額では修正できません。")
+
     st.divider()
 
-    
-    comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
-    
-    st.subheader("差額結果")
-    show_difference_summary(comparison_results)
-    
-    mismatch_results = filter_mismatches(comparison_results)
+    st.subheader("点検記録")
 
-    if len(mismatch_results) > 0:
-        st.divider()
+    records = load_usage_records()
 
-        st.subheader("差額修正ツール")
-        st.write("差額が出ている決済方法を選択してください。")
-        st.write("POSの注文履歴から取消したい取引金額を入力すると、修正に使える商品組み合わせ候補を表示します。")
-        st.write("候補が表示されたら、金額を確認して、問題なければ印刷してください。")
-        mismatch_methods = get_mismatch_methods(mismatch_results)
-
-        selected_method = st.selectbox("差額が出ている決済方法", mismatch_methods)
-        selected_result = find_result_by_method(mismatch_results, selected_method)
-
-        if selected_result is None:
-            st.error("選択した項目が見つかりませんでした。")
-        else:
-            st.write("差額:", selected_result["difference"])
-
-            if selected_result["mode"] == "POS_GT_CAT":
-                st.write("POS側が多いです。")
-                st.write("POSの注文履歴から取消したい取引を1つ選び、その金額を入力してください。")
-            elif selected_result["mode"] == "CAT_GT_POS":
-                st.write("CAT側が多いです。")
-                st.write("POS側に差額分を追加できる可能性があります。")
-                st.write("合う候補がない場合は、POSで取消したい取引金額を入力してください。")
-
-            cancelled_amount = st.number_input("POSで一度取消したい取引の金額", min_value=0, value=0, step=1, key="cancelled_amount_" + str(reset_count))
-
-            target_amount = calculate_target_amount(cancelled_amount, selected_result["difference"], selected_result["mode"])
-
-            if target_amount is not None and target_amount > 0:
-                st.write("新しい注文金額", target_amount)
-                st.divider()
-                combinations = find_combinations(products, target_amount, max_items=8, max_results=3)
-                if len(combinations) > 0:
-                    formatted_combinations = format_combinations(combinations)
-                    show_combination_results(formatted_combinations)
-                else:
-                    st.write("候補なし")
+    for record in records:
+        st.write(f"日付：{record["time_stamp"]}")
+        for method in POS_METHODS:
+            result = record["summary"][method]
+            if result == "OK!":
+                st.write(f"{method}: OK!")
             else:
-                st.write("取消金額が差額より小さいため、この金額では修正できません。")
+                st.write(f"{method}:")
+                st.write(f"差額:{result['差額']}")
+                st.write(f"mode:{result['mode']}")
+
+
+   
+
+    
+
+
     
     
 
