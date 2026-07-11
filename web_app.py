@@ -18,7 +18,7 @@ from reconciler import(
     find_result_by_method
 )
 
-APP_VERSION = "v1.3.0"
+APP_VERSION = "v1.4.0"
 
 # =========================
 # UI helper function
