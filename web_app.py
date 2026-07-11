@@ -1,5 +1,6 @@
 import streamlit as st
-import time as time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from reconciler import(
     load_menu,
@@ -314,7 +315,8 @@ if __name__ == "__main__":
         
         mismatch_results = filter_mismatches(comparison_results)
 
-        time_stamp = time.strftime("%m/%d %H:%M")
+        now = datetime.now(ZoneInfo("Asia/Tokyo"))
+        time_stamp = now.strftime("%m/%d %H:%M")
 
         summary = summarize_comparison_results(comparison_results)
 
