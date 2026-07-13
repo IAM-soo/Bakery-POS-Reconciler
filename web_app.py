@@ -306,21 +306,25 @@ if __name__ == "__main__":
         pos_amounts, cat_amounts = payment_method_input(reset_count)
 
     if st.button("チェック"):
+        st.session_state["checked"] = True
 
-        comparison_results = compare_payment_amounts(pos_amounts, cat_amounts)
+        st.session_state["comparison_results"] = compare_payment_amounts(pos_amounts, cat_amounts)
         
         st.subheader("差額結果")
 
-        show_difference_summary(comparison_results)
+        show_difference_summary(st.session_state["comparison_results"])
         
-        mismatch_results = filter_mismatches(comparison_results)
+        mismatch_results = filter_mismatches(st.session_state["comparison_results"])
 
         now = datetime.now(ZoneInfo("Asia/Tokyo"))
         time_stamp = now.strftime("%m/%d %H:%M")
-
-        summary = summarize_comparison_results(comparison_results)
-
+        summary = summarize_comparison_results(st.session_state["comparison_results"])
         save_usage_record(time_stamp, summary)
+
+    if st.session_state.get("checked", False):
+        comparison_results = st.session_state["comparison_results"]
+
+        mismatch_results = filter_mismatches(comparison_results)
 
         if len(mismatch_results) > 0:
             st.divider()
@@ -362,8 +366,6 @@ if __name__ == "__main__":
                         st.write("候補なし")
                 else:
                     st.write("取消金額が差額より小さいため、この金額では修正できません。")
-
-    st.divider()
 
     st.subheader("点検記録")
 
